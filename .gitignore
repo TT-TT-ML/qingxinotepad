@@ -1,3 +1,9 @@
+_np*.txt
+_tree.txt
+_blib.log
+builder_cli.log
+Cmdbrow_*.html
+*.bak
 dist/
 _highlight_samples/
 build/

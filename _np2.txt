@@ -1,4 +1,0 @@
-hwnd 5311350 statusbar 461724 parts: ['', '', '', '', '']
-after UTF-8 BOM: []
-after LF: [] | file: b'hello\r\n\xe4\xb8\x96\xe7\x95'
-grabbed C:\work\qingxinotepad\_highlight_samples\np_format_menu.png 0 0
