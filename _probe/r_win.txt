@@ -1,0 +1,2 @@
+file=C:\work\qingxinotepad\_highlight_samples\ctrl_win.cpp chars=85 diags=1
+   line 2: MISSING INCLUDE <windows.h>  (call BitBlt)

@@ -1,0 +1,155 @@
+#include "resource.h"
+#include <windows.h>
+IDI_NOTEPAD ICON "icon.ico"
+IDR_MAINMENU MENU
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&New\tCtrl+N", IDM_FILE_NEW
+        MENUITEM "&Open...\tCtrl+O", IDM_FILE_OPEN
+        MENUITEM "&Save\tCtrl+S", IDM_FILE_SAVE
+        MENUITEM "Save &As...\tCtrl+Shift+S", IDM_FILE_SAVEAS
+        MENUITEM SEPARATOR
+        MENUITEM "&Print...\tCtrl+P", IDM_FILE_PRINT
+        MENUITEM "Page Set&up...", IDM_FILE_PAGESETUP
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit", IDM_FILE_EXIT
+    END
+    POPUP "&Edit"
+    BEGIN
+        MENUITEM "&Undo\tCtrl+Z", IDM_EDIT_UNDO
+        MENUITEM "&Redo\tCtrl+Y", IDM_EDIT_REDO
+        MENUITEM SEPARATOR
+        MENUITEM "Cu&t\tCtrl+X", IDM_EDIT_CUT
+        MENUITEM "&Copy\tCtrl+C", IDM_EDIT_COPY
+        MENUITEM "&Paste\tCtrl+V", IDM_EDIT_PASTE
+        MENUITEM "De&lete\tDel", IDM_EDIT_DELETE
+        MENUITEM SEPARATOR
+        MENUITEM "&Find...\tCtrl+F", IDM_EDIT_FIND
+        MENUITEM "Find &Next\tF3", IDM_EDIT_FINDNEXT
+        MENUITEM "Find Pre&vious\tShift+F3", IDM_EDIT_FINDPREV
+        MENUITEM "&Replace...\tCtrl+H", IDM_EDIT_REPLACE
+        MENUITEM "&Go To...\tCtrl+G", IDM_EDIT_GOTO
+        MENUITEM SEPARATOR
+        MENUITEM "Select &All\tCtrl+A", IDM_EDIT_SELECTALL
+        MENUITEM "Time/&Date\tF5", IDM_EDIT_TIMEDATE
+    END
+    POPUP "F&ormat"
+    BEGIN
+        MENUITEM "&Word Wrap", IDM_FORMAT_WORDWRAP
+        MENUITEM "&Font...", IDM_FORMAT_FONT
+        MENUITEM SEPARATOR
+        POPUP "&Encoding"
+        BEGIN
+            MENUITEM "UTF-8", IDM_FORMAT_ENC_BASE + 0
+            MENUITEM "UTF-8 with BOM", IDM_FORMAT_ENC_BASE + 1
+            MENUITEM "UTF-16 LE", IDM_FORMAT_ENC_BASE + 2
+            MENUITEM "UTF-16 BE", IDM_FORMAT_ENC_BASE + 3
+            MENUITEM "ANSI", IDM_FORMAT_ENC_BASE + 4
+        END
+        POPUP "&Line Endings"
+        BEGIN
+            MENUITEM "Windows (CRLF)", IDM_FORMAT_EOL_BASE + 0
+            MENUITEM "Unix (LF)", IDM_FORMAT_EOL_BASE + 1
+            MENUITEM "Macintosh (CR)", IDM_FORMAT_EOL_BASE + 2
+        END
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "Zoom &In\tCtrl+Plus", IDM_VIEW_ZOOMIN
+        MENUITEM "Zoom &Out\tCtrl+Minus", IDM_VIEW_ZOOMOUT
+        MENUITEM "&Restore Default Zoom\tCtrl+0", IDM_VIEW_ZOOMDEFAULT
+        MENUITEM SEPARATOR
+        MENUITEM "&Status Bar", IDM_VIEW_STATUSBAR, CHECKED
+        MENUITEM "&Dark Mode", IDM_VIEW_DARKMODE
+        MENUITEM SEPARATOR
+        POPUP "&Background"
+        BEGIN
+            MENUITEM "&Select Image...", IDM_VIEW_BG_SELECT
+            MENUITEM "&Clear Background", IDM_VIEW_BG_CLEAR
+            MENUITEM "&Opacity...", IDM_VIEW_BG_OPACITY
+            MENUITEM SEPARATOR
+            POPUP "&Position"
+            BEGIN
+                MENUITEM "Top Left", IDM_VIEW_BG_POS_TOPLEFT
+                MENUITEM "Top Center", IDM_VIEW_BG_POS_TOPCENTER
+                MENUITEM "Top Right", IDM_VIEW_BG_POS_TOPRIGHT
+                MENUITEM SEPARATOR
+                MENUITEM "Center Left", IDM_VIEW_BG_POS_CENTERLEFT
+                MENUITEM "Center", IDM_VIEW_BG_POS_CENTER, CHECKED
+                MENUITEM "Center Right", IDM_VIEW_BG_POS_CENTERRIGHT
+                MENUITEM SEPARATOR
+                MENUITEM "Bottom Left", IDM_VIEW_BG_POS_BOTTOMLEFT
+                MENUITEM "Bottom Center", IDM_VIEW_BG_POS_BOTTOMCENTER
+                MENUITEM "Bottom Right", IDM_VIEW_BG_POS_BOTTOMRIGHT
+                MENUITEM SEPARATOR
+                MENUITEM "Tile", IDM_VIEW_BG_POS_TILE
+                MENUITEM "Stretch", IDM_VIEW_BG_POS_STRETCH
+                MENUITEM "Fit", IDM_VIEW_BG_POS_FIT
+                MENUITEM "Fill", IDM_VIEW_BG_POS_FILL
+            END
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "Window &Transparency...", IDM_VIEW_TRANSPARENCY
+        MENUITEM "Always on &Top", IDM_VIEW_ALWAYSONTOP
+        MENUITEM SEPARATOR
+        POPUP "&Icon"
+        BEGIN
+            MENUITEM "&Change Icon...", IDM_VIEW_ICON_CHANGE
+            MENUITEM "&Reset to Default", IDM_VIEW_ICON_RESET
+        END
+    END
+    POPUP "&Language"
+    BEGIN
+        MENUITEM "&English", IDM_VIEW_LANG_EN
+        MENUITEM "&Chinese", IDM_VIEW_LANG_ZH_CN
+        MENUITEM "Chinese (Traditional)", IDM_VIEW_LANG_ZH_TW
+        MENUITEM "&Japanese", IDM_VIEW_LANG_JA
+        MENUITEM "&Korean", IDM_VIEW_LANG_KO
+        MENUITEM "&Russian", IDM_VIEW_LANG_RU
+        MENUITEM "&Spanish", IDM_VIEW_LANG_ES
+        MENUITEM "&French", IDM_VIEW_LANG_FR
+        MENUITEM "&German", IDM_VIEW_LANG_DE
+        MENUITEM "&Portuguese", IDM_VIEW_LANG_PT
+        MENUITEM "Arabic", IDM_VIEW_LANG_AR
+        MENUITEM "Hindi", IDM_VIEW_LANG_HI
+        MENUITEM "Italian", IDM_VIEW_LANG_IT
+        MENUITEM "Dutch", IDM_VIEW_LANG_NL
+        MENUITEM "Turkish", IDM_VIEW_LANG_TR
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "Check for &Updates...", IDM_HELP_CHECKUPDATES
+        MENUITEM "&About Qingxin Notepad", IDM_HELP_ABOUT
+    END
+    POPUP "&Build"
+    BEGIN
+        MENUITEM "&Compile\tF7", IDM_BUILD_COMPILE
+        MENUITEM "Ignore checks, force compile", IDM_BUILD_FORCE
+        MENUITEM "Compile &Settings...", IDM_BUILD_SETTINGS
+    END
+END
+IDR_ACCEL ACCELERATORS
+BEGIN
+    "N", IDM_FILE_NEW, VIRTKEY, CONTROL
+    "O", IDM_FILE_OPEN, VIRTKEY, CONTROL
+    "S", IDM_FILE_SAVE, VIRTKEY, CONTROL
+    "S", IDM_FILE_SAVEAS, VIRTKEY, CONTROL, SHIFT
+    "P", IDM_FILE_PRINT, VIRTKEY, CONTROL
+    "Z", IDM_EDIT_UNDO, VIRTKEY, CONTROL
+    "Y", IDM_EDIT_REDO, VIRTKEY, CONTROL
+    "X", IDM_EDIT_CUT, VIRTKEY, CONTROL
+    "C", IDM_EDIT_COPY, VIRTKEY, CONTROL
+    "V", IDM_EDIT_PASTE, VIRTKEY, CONTROL
+    "F", IDM_EDIT_FIND, VIRTKEY, CONTROL
+    VK_F3, IDM_EDIT_FINDNEXT, VIRTKEY
+    VK_F3, IDM_EDIT_FINDPREV, VIRTKEY, SHIFT
+    "H", IDM_EDIT_REPLACE, VIRTKEY, CONTROL
+    "G", IDM_EDIT_GOTO, VIRTKEY, CONTROL
+    "A", IDM_EDIT_SELECTALL, VIRTKEY, CONTROL
+    VK_F5, IDM_EDIT_TIMEDATE, VIRTKEY
+    VK_OEM_PLUS, IDM_VIEW_ZOOMIN, VIRTKEY, CONTROL
+    VK_OEM_MINUS, IDM_VIEW_ZOOMOUT, VIRTKEY, CONTROL
+    "0", IDM_VIEW_ZOOMDEFAULT, VIRTKEY, CONTROL
+    VK_F7, IDM_BUILD_COMPILE, VIRTKEY
+END

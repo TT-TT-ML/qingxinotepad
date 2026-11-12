@@ -1,0 +1,2 @@
+file=C:\work\qingxinotepad\_highlight_samples\ctrl_unknown.cpp chars=86 diags=1
+   line 3: UNKNOWN FUNCTION bogus_fn

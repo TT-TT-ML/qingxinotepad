@@ -1,0 +1,2 @@
+file=C:\work\qingxinotepad\_highlight_samples\bits_test.cpp chars=436 diags=1
+   line 15: UNKNOWN FUNCTION setlocale

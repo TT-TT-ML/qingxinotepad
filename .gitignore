@@ -1,0 +1,16 @@
+dist/
+_highlight_samples/
+build/
+*.exe
+*.obj
+*.res
+*.ilk
+*.pdb
+.vs/
+CMakeSettings.json
+*.user
+target/
+.claude
+_codeql_build_dir
+_codeql_detected_source_root
+RELEASE_NOTES.md
