@@ -275,6 +275,19 @@ static bool IsZeroWidth(wchar_t c)
 
 /*  单词字符：字母/数字（含中文、阿拉伯文、西里尔文等），以及粘在      */
 /*  基字符上的组合符和代理对。其余（空格、标点、符号）都算分隔符。      */
+// 中日韩文字（汉字、假名、韩文、全角形式）习惯上“一字即一词”，
+// 折行时可以在任意两个字之间断开，不需要把整段当作一个词挪到下一行。
+static bool IsCjkBreakable(wchar_t c)
+{
+    return (c >= 0x1100 && c <= 0x11FF) || // 韩文字母
+           (c >= 0x2E80 && c <= 0x9FFF) || // CJK 部首/符号/假名/汉字
+           (c >= 0xAC00 && c <= 0xD7A3) || // 韩文音节
+           (c >= 0xF900 && c <= 0xFAFF) || // CJK 兼容汉字
+           (c >= 0xFE30 && c <= 0xFE4F) || // CJK 兼容形式
+           (c >= 0xFF00 && c <= 0xFF60) || // 全角形式
+           (c >= 0xFFE0 && c <= 0xFFE6);
+}
+
 static bool IsWordCodeUnit(wchar_t c)
 {
     if (c >= 0xD800 && c <= 0xDFFF)
@@ -426,6 +439,8 @@ static int VisibleRows(HWND hwnd, const EditorState *st)
     · 空格、制表符、标点、符号都算分隔符（不论什么语言）。
     · 一个连续的字母/数字串（含中文、阿拉伯文等）算一个词；这个词在
       行尾放不下就整体挪到下一行，分隔符留在上一行行尾。
+    · 中日韩文字（汉字、假名、韩文、全角形式）按“一字即一词”处理：
+      行尾放不下时直接在当前字前断开，不再整段挪行。
     · 连续串超过 15 个字符就不算“词”了，允许在其中硬断，避免超长
       URL / 压缩后的代码 / 无空格长串把光标逼到屏幕外。               */
 static const int kMaxWordChars = 15;
@@ -451,15 +466,17 @@ static int WrapNextRow(const std::wstring &s, size_t start, size_t len, int fc)
         return static_cast<int>(len);
     if (i <= start)
         return static_cast<int>(NextGrapheme(s, start, len)); // 一行放不下一个字符
+    if (IsCjkBreakable(s[i]))
+        return static_cast<int>(NextGrapheme(s, i, len)); // 中日韩一字一词：直接在这个字前断开
     if (!IsWordCodeUnit(s[i]))
         return static_cast<int>(NextGrapheme(s, i, len)); // 分隔符留在上一行行尾，下一行不以空格/标点开头
     // 断点落在一个词中间：把整个词挪到下一行（词太长就按原断点硬断）
     size_t ts = i;
-    while (ts > start && IsWordCodeUnit(s[ts - 1]))
+    while (ts > start && IsWordCodeUnit(s[ts - 1]) && !IsCjkBreakable(s[ts - 1]))
         --ts;
     size_t te = ts;
     int wordLen = 0;
-    while (te < len && IsWordCodeUnit(s[te]))
+    while (te < len && IsWordCodeUnit(s[te]) && !IsCjkBreakable(s[te]))
     {
         te = NextGrapheme(s, te, len);
         ++wordLen;
