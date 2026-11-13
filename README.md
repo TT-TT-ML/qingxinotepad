@@ -1,146 +1,144 @@
-# Qingxin Notepad
+# 晴溪notepad · Qingxin Notepad 1.3.0
 
-A lightweight, 25x fast, Windows notepad alternative built with C++17 and Win32 API which I made because microsoft wont stop adding AI bloatware to notepad.exe.
+轻量、原生的 Windows 文本 / 代码编辑器，用 C++17 + Win32 API 手写，**界面全部自绘**，不依赖 RichEdit / Qt / .NET，单文件 exe 无第三方运行时。
 
-<img width="752" height="242" alt="image" src="https://github.com/user-attachments/assets/bca18796-b088-4488-a445-649a549ddace" />
-<img width="738" height="243" alt="image" src="https://github.com/user-attachments/assets/e9ba9361-d1ea-41ee-a18d-f38fb9bdb546" />
+A lightweight native Windows text & code editor written in C++17 with the Win32 API — fully self-drawn UI, no RichEdit, no Qt, no .NET, one exe and no third-party runtime.
 
-## Screenshot:
+---
 
-<img width="986" height="735" alt="image" src="https://github.com/user-attachments/assets/939cbb8b-a770-449c-9d9d-e93e076787d3" />
+## 下载
 
-## Features
+| 渠道 | 地址 |
+| --- | --- |
+| 官方下载中心 | <https://ttqx.cc.cd/d/> → 「晴溪notepad文本编辑器 / 1.3.0」 |
+| 安装版直链 | <https://ttqx.cc.cd/d/get/%E6%99%B4%E6%BA%AAnotepad%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8/1.3.0/qingxinotepad_install.exe> |
+| 绿色版直链 | <https://ttqx.cc.cd/d/get/%E6%99%B4%E6%BA%AAnotepad%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8/1.3.0/qingxinotepad-portable-1.3.0.zip> |
+| 源码 | 本仓库（`main` 分支） |
 
-- **Multi-language support**: English and Japanese translations with runtime switching.
-- **Multi-encoding text**: UTF-8, UTF-8 BOM, UTF-16 LE/BE, ANSI with line-ending selection.
-- **Rich editing**: word wrap toggle, font selection, zoom, time/date stamp, find/replace/goto.
-- **Backgrounds**: optional image with tile/stretch/fit/fill/anchor modes and opacity control. (known issues)
-- **Always on top**: window pinning support.
-- **Printing**: print and page setup dialogs.
-- **Customizable icon**: change the application icon from `.ico` files or icon libraries such as `.exe`, `.dll`, `.icl`, and `.mun`.
+- **安装版**：单个 `qingxinotepad_install.exe`，安装时可选要注册的文件关联扩展名。
+- **绿色版**：解压后直接运行 `qingxinotepad.exe`，配置写在 exe 同目录的 `qingxinotepad.ini`，不往系统里写任何东西。
 
-## Requisites
+## 功能
 
-Building Qingxin Notepad requires:
+**编辑与排版**
+- 自绘编辑器控件：按单词软换行、折行块行号居中 + GDI 中括号、列选/行选中、光标逐字素移动。
+- 软换行分词规则：空格 / 制表符 / 标点 / 符号都是分隔点；一个连续字母数字串算一个词，行尾放不下就整体下移；超过 15 个字符的超长串（URL、压缩代码）允许硬断。
+- **中日韩按「一字即一词」处理**：汉字、假名、韩文、全角形式在行尾逐字断开，不再整段搬家。
+- 中文 / 阿拉伯文等宽字符按 2 列布局，混合排版与 RTL 菜单可用。
+- 按 `Down` 在折行块内直接跳到**下一逻辑行**（折行行属于同一行，不再逐视觉行爬）。
 
-- **Operating System**: Windows 7 SP1 or newer (Windows 10/11 recommended for full UI feature support).
-- **Build System**: [CMake](https://cmake.org/download/) 3.16 or higher.
-- **Compiler**: A C++17 compatible toolchain:
-  - **MinGW-w64**: Tested with GCC 13.2.0 (standard for lightweight builds).
-  - **MSVC**: Visual Studio 2022 or higher.
-- **SDKs**: Windows SDK (included with Visual Studio or available via MSYS2 for MinGW).
-- **Dependencies**: The app uses standard Windows components: `GDI+`, `RichEdit 4.1` (`Msftedit.dll`), `Common Controls`, and `DWM`.
+**代码能力**
+- 语法高亮：C/C++、Python、JavaScript、HTML/CSS 等，含括号配对标记。
+- 自动补全：按已输入前缀过滤符号与库函数，带类型前缀；光标前没有正在输入的词时不弹窗，`Ctrl+Space` 可手动呼出。
+- 代码检查：未定义函数标红行 + 弹窗提示缺头文件；`#include "本地头文件"` 会并入符号集。
+- 多语言编译：选语言直接编译，编译在独立线程跑，错误/警告进自绘报错窗口（黄底警告、红底错误、可滚动），支持忽略检查强制编译。
+- 库窗口：内置库目录，可搜索并下载 C++ 库与 Python 包。
 
-## Build & Installation
+**界面**
+- 多标签：顶部标签栏显示文件名（超长省略）+ 未保存状态。
+- 深色模式：标题栏、菜单栏、**所有菜单项（含子菜单父项、分隔线、三角箭头、弹出菜单底色）全部自绘**，不残留系统白条。
+- 15 种界面语言，运行时可切换：英语、日语、简体中文、俄语、西班牙语、繁体中文、韩语、法语、德语、葡萄牙语、阿拉伯语、印地语、意大利语、荷兰语、土耳其语。
+- 背景图：可设图片背景，平铺 / 拉伸 / 适应 / 填充 / 锚点 + 透明度。
+- 其他：缩放、状态栏（行列 / 编码 / 行尾 / 缩放 / 语法）、窗口置顶、自定义图标（`.ico` / `.exe` / `.dll` / `.icl` / `.mun`）。
 
-### Using MinGW (Recommended for GCC)
+**文件**
+- 编码：UTF-8、UTF-8 带 BOM、UTF-16 LE/BE、ANSI；行尾 CRLF / LF / CR。
+- 查找 / 替换 / 跳转，区分大小写与方向；最近文件列表；打印与页面设置。
 
-Ensure your MinGW `bin` folder is in your system `PATH`.
+## 构建
 
-```powershell
-# 1. Clone the repository
-git clone https://github.com/ForLoopCodes/legacy-notepad.git
-cd legacy-notepad
-
-# 2. Create and enter build directory
-mkdir build
-cd build
-
-# 3. Configure and build
-cmake -G "MinGW Makefiles" ..
-mingw32-make -j$(nproc)
-
-# 4. Run the application
-.\legacy-notepad.exe
-```
-
-### Using Visual Studio (MSVC)
-
-1. Open the folder in Visual Studio 2022.
-2. Visual Studio will automatically detect `CMakeLists.txt` and configure the project.
-3. Select `legacy-notepad.exe` in the startup item dropdown.
-4. Press `F5` to build and run.
-
-Alternatively, via command line:
+依赖：Windows 10/11 x64、CMake ≥ 3.16、C++17 编译器（MSVC 2022/2026 或 MinGW-w64）。
 
 ```powershell
-cmake -B build -S .
+# 配置（MSVC）
+cmake -S . -B build -G "Visual Studio 18 2026" -A x64
+# 或 MinGW
+cmake -S . -B build -G "MinGW Makefiles"
+
+# 编译 Release
 cmake --build build --config Release
 ```
 
-## Architecture
+产物：`build/Release/qingxinotepad.exe`。MSVC 下按 `/W4 /WX` 编译，当前为 0 warning。
 
-- **Entry**: `src/main.cpp` - window class, message loop, wiring modules.
-- **Core**: `src/core` - shared types and globals.
-- **Modules** (`src/modules`): `theme` (dark mode), `editor` (RichEdit handling), `file` (I/O & encodings), `ui` (title/status/layout), `background` (GDI+), `dialog` (find/replace/font/transparency), `commands` (menu actions).
-- **Resources**: `src/notepad.rc`, `src/resource.h`, icons/menus/accelerators.
+> 编译前请先关掉正在运行的 `qingxinotepad.exe`，否则链接器无法覆盖同名文件。
 
-## Repository tree
+## 打包（安装包 + 绿色包）
+
+```powershell
+pwsh -File build_and_pack.ps1              # 默认版本 1.3.0
+pwsh -File build_and_pack.ps1 -Version 1.3.1
+pwsh -File build_and_pack.ps1 -SkipBuild   # 只重新打包，不重编译
+```
+
+输出到 `dist/`：
+
+- `qingxinotepad_install.exe` —— 单文件安装包（安装器 stub + 内嵌 zip），由安装包构建器 CLI 生成，全程无 GUI 点击。
+- `qingxinotepad-portable-<version>.zip` —— 绿色包，配置跟着 exe 走。
+
+### 便携模式
+
+在 exe 同目录放一个名为 `qingxinotepad.portable`（或 `portable.txt`）的标记文件即可：
+
+| 状态 | 配置 | 下载的库 |
+| --- | --- | --- |
+| 安装版 | `HKCU\Software\LegacyNotepad` | `%LOCALAPPDATA%\LegacyNotepad` |
+| 便携版 | exe 同目录 `qingxinotepad.ini` | exe 同目录 `data\` |
+
+同一个 exe 两种模式都支持；便携模式下不往自身目录以外写任何文件。
+
+## 目录结构
 
 ```
 src/
-  core/           # types, globals
-  modules/        # theme, editor, file, ui, background, dialog, commands
-  main.cpp
-  notepad.rc
+  core/        # 类型、全局句柄、设置存储（storage）
+  lang/        # 15 种界面语言表 + 语言运行时（lang.cpp）
+  modules/
+    codeeditor  # 自绘编辑器控件：布局、软换行、绘制、命中测试、补全
+    syntax      # 语法定义、扩展名检测、分词与高亮着色
+    symbols     # 符号表与代码检查（未定义函数、头文件提示）
+    compiler    # 多语言编译调度（独立线程）
+    compilewindow  # 自绘报错/警告窗口
+    tabs        # 标签栏
+    menu / menu_skin  # 菜单构建与全项自绘（含子菜单、分隔线）
+    theme       # 浅/深色主题与菜单刷新
+    background  # GDI+ 背景图/透明度/位置
+    dialog      # 查找、替换、字体、透明度等对话框
+    settings / file / ui / commands / editor
+    libwindow / libcatalog / libsource / netlib  # 库窗口与下载
+    presets     # 预置库函数/关键字表
+  main.cpp      # 窗口类、消息循环、模块装配
+  notepad.rc    # 菜单、加速键、图标
 CMakeLists.txt
+build_and_pack.ps1
 ```
 
-## File quicklook
+## 版本历史
 
-| File/Folder                        | Purpose                                         |
-| ---------------------------------- | ----------------------------------------------- |
-| `src/main.cpp`                     | Win32 entry point, WndProc, module wiring       |
-| `src/core/types.h`                 | Enums, structs, app constants                   |
-| `src/core/globals.*`               | Shared handles/state definitions                |
-| `src/modules/editor.*`             | RichEdit setup, word wrap, zoom                 |
-| `src/modules/file.*`               | Load/save, encoding + line endings, recent list |
-| `src/modules/ui.*`                 | Title/status updates, layout sizing             |
-| `src/modules/theme.*`              | Dark mode title/menu/status, theming            |
-| `src/modules/background.*`         | GDI+ background image/opacity/position          |
-| `src/modules/dialog.*`             | Find/replace/goto, font, transparency dialogs   |
-| `src/modules/commands.*`           | Menu command handlers                           |
-| `src/notepad.rc`, `src/resource.h` | Menus, accelerators, icons                      |
+### 1.3.0
+- **深色模式菜单**：所有菜单项（含「背景 / 图标 / 最近文件 / 语言 / 编译 / 编码 / 行尾」等子菜单父项）与分隔线全部改为自绘，子菜单箭头用 GDI 绘制，弹出菜单内边距与边框一并染深色，深色下不再出现白色条块。
+- **自动补全**：光标前没有正在输入的词（刚敲空格/括号、自动配对后停在括号中）不再弹窗；候选只是把已输入词重列一遍时也不弹窗。
+- **中文语言**：修正「关于」对话框与状态栏文案错位（原先关于框显示「行 」、状态栏显示整段关于文案），统一连字符写法。
+- **自动换行**：按 `Down` 从折行块直接跳到下一逻辑行；**中日韩文字改为一字一词，行尾逐字断开**。
+- 版本号统一 1.3.0，界面语言 15 种。
 
-## License
+### 1.2.0 及更早
+- 软换行分词规则升级（符号分隔 + 15 字符上限）、多文字宽度适配、界面语言扩到 15 种。
+- 编译报错窗口、代码检查、自动补全、多标签、自绘菜单、背景图等逐版加入。
 
-MIT License - see [LICENSE](LICENSE).
+## 已知问题
 
-## Known issues
+- Windows Defender 可能对未签名 exe 报启发式误报，见 `.github/DEFENDER_FALSE_POSITIVE.md`。
+- 背景图各模式在极端 DPI / 缩放比下可能有细微差异。
 
-- Windows Defender flags legacy-notepad-x86.exe; see issue #26: https://github.com/ForLoopCodes/legacy-notepad/issues/26
+## 许可
 
-## Notes
+MIT License，见 [LICENSE](LICENSE)。
 
-- Windows-only (Win32 API + GDI+). Use Wine/Proton at your own risk.
-- Background image modes may vary slightly across DPI/scaling settings.
-- Unsigned Windows binaries can occasionally trigger heuristic antivirus detections; always verify published SHA-256 hashes.
+## 反馈
 
-## Packaging (installer + portable)
+命令面板 <https://ttqx.cc.cd/p/> 或仓库 Issues。
 
-One command builds Release and produces both deliverables:
-
-```powershell
-pwsh -File build_and_pack.ps1              # version 1.3.0
-pwsh -File build_and_pack.ps1 -Version 1.2.1
-pwsh -File build_and_pack.ps1 -SkipBuild   # repackage without rebuilding
-```
-
-Output in `dist/`:
-
-- `qingxinotepad_install.exe` — single-file installer (installer stub + embedded zip), produced by the 安装包构建器 CLI (`Builder.exe -cli ...`) with no GUI clicking.
-- `portable/qingxinotepad-portable-<version>.zip` — green copy whose settings travel with the exe.
-
-### Portable mode
-
-Drop a marker file named `qingxinotepad.portable` (or `portable.txt`) next to the exe:
-
-| state | settings | downloaded libraries |
-| --- | --- | --- |
-| installed | `HKCU\Software\LegacyNotepad` | `%LOCALAPPDATA%\LegacyNotepad` |
-| portable | `qingxinotepad.ini` beside the exe | `data\` beside the exe |
-
-The same binary serves both modes; in portable mode nothing is written outside its own folder.
 ## Queries
 
 [x.com/forloopcodes](https://x.com/forloopcodes)
