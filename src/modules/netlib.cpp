@@ -37,11 +37,11 @@ bool CrackUrl(const std::wstring &url, UrlParts &p)
 
 HINTERNET OpenSession(DWORD timeoutMs)
 {
-    HINTERNET session = WinHttpOpen(L"QingxinNotepad-LibBrowser/1.0",
+    HINTERNET session = WinHttpOpen(L"QingxiNotepad-LibBrowser/1.0",
                                     WINHTTP_ACCESS_TYPE_AUTOMATIC_PROXY,
                                     WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
     if (!session)
-        session = WinHttpOpen(L"QingxinNotepad-LibBrowser/1.0",
+        session = WinHttpOpen(L"QingxiNotepad-LibBrowser/1.0",
                               WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
                               WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
     if (session)
@@ -71,7 +71,7 @@ HINTERNET SendGet(HINTERNET session, const UrlParts &p, DWORD timeoutMs)
 
     // No Accept-Encoding: WinHTTP does not decode gzip bodies, so asking for
     // compressed content would hand us bytes we cannot parse.
-    WinHttpAddRequestHeaders(req, L"User-Agent: QingxinNotepad-LibBrowser/1.0\r\n", static_cast<DWORD>(-1),
+    WinHttpAddRequestHeaders(req, L"User-Agent: QingxiNotepad-LibBrowser/1.0\r\n", static_cast<DWORD>(-1),
                              WINHTTP_ADDREQ_FLAG_ADD | WINHTTP_ADDREQ_FLAG_REPLACE);
 
     // The connection handle is owned by the request handle chain.

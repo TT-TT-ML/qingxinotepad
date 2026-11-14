@@ -4,7 +4,7 @@
 #   pwsh -File build_and_pack.ps1 -Version 1.2.1  # 出新版本
 #   pwsh -File build_and_pack.ps1 -SkipBuild      # 不重新编译，只重打包
 param(
-    [string]$Version = "1.4.2",
+    [string]$Version = "1.4.3",
     [switch]$SkipBuild
 )
 
