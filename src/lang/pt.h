@@ -120,5 +120,8 @@ inline LangStrings g_langPT = {
     L"&Italiano",
     L"&Holandês",
     L"&Turco",
-    L"&Linha de comando",
-    L"Compilar e &executar"};
+    L"&Console",
+    L"Compilar e &executar",
+    L"Janela do &console\tCtrl+`",
+    L"&Limpar saída",
+    L"&Fechar console"};

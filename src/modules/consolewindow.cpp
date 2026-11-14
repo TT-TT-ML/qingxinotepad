@@ -2453,6 +2453,16 @@ void ConsoleClose()
         DestroyWindow(g_con.hwnd);
 }
 
+// 菜单「控制台 → 清空输出」：只清输出区，不动输入行、历史与正在运行的进程。
+void ConsoleClear()
+{
+    if (!ConsoleIsOpen())
+        return;
+    g_con.pending.clear();
+    g_con.curColor = 0;
+    ClearOutput();
+}
+
 void ConsoleRunBuiltExe(const std::wstring &exePath)
 {
     ConsoleShow(g_hwndMain);

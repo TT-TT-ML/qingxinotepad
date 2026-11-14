@@ -120,5 +120,8 @@ inline LangStrings g_langDE = {
     L"&Italienisch",
     L"&Niederländisch",
     L"&Türkisch",
-    L"&Befehlszeile",
-    L"Kompilieren und &ausführen"};
+    L"&Konsole",
+    L"Kompilieren und &ausführen",
+    L"&Konsolenfenster\tCtrl+`",
+    L"&Ausgabe löschen",
+    L"Konsole &schließen"};

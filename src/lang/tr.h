@@ -122,5 +122,8 @@ inline LangStrings g_langTR = {
     L"&Italiano",
     L"&Nederlands",
     L"&Türkçe",
-    L"&Komut satırı",
-    L"Derle ve &çalıştır"};
+    L"&Konsol",
+    L"Derle ve &çalıştır",
+    L"&Konsol penceresi\tCtrl+`",
+    L"Çıktıyı &temizle",
+    L"&Konsolu kapat"};

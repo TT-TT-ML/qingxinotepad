@@ -170,9 +170,6 @@ void UpdateMenuStrings()
             ModifyMenuW(hSub, IDM_VIEW_ICON_RESET, MF_BYCOMMAND | MF_STRING, IDM_VIEW_ICON_RESET, lang.menuIconReset.c_str());
             break;
         }
-
-        // 命令行（Ctrl+`）：打开自绘命令行窗口
-        ModifyMenuW(hViewMenu, IDM_VIEW_CONSOLE, MF_BYCOMMAND | MF_STRING, IDM_VIEW_CONSOLE, lang.menuConsole.c_str());
     }
 
     HMENU hLangMenu = GetSubMenu(hMenu, 4);
@@ -194,6 +191,17 @@ void UpdateMenuStrings()
     if (hBuildMenu)
         ModifyMenuW(hMenu, 6, MF_BYPOSITION | MF_STRING | MF_POPUP, reinterpret_cast<UINT_PTR>(hBuildMenu), lang.menuBuild.c_str());
     RebuildBuildMenu();
+
+    // 控制台：独立的一级菜单（命令行窗口 / 清空输出 / 关闭）
+    HMENU hConsoleMenu = GetSubMenu(hMenu, 7);
+    if (hConsoleMenu)
+    {
+        ModifyMenuW(hMenu, 7, MF_BYPOSITION | MF_STRING | MF_POPUP,
+                    reinterpret_cast<UINT_PTR>(hConsoleMenu), lang.menuConsole.c_str());
+        ModifyMenuW(hConsoleMenu, IDM_VIEW_CONSOLE, MF_BYCOMMAND | MF_STRING, IDM_VIEW_CONSOLE, lang.menuConsoleOpen.c_str());
+        ModifyMenuW(hConsoleMenu, IDM_CONSOLE_CLEAR, MF_BYCOMMAND | MF_STRING, IDM_CONSOLE_CLEAR, lang.menuConsoleClear.c_str());
+        ModifyMenuW(hConsoleMenu, IDM_CONSOLE_CLOSE, MF_BYCOMMAND | MF_STRING, IDM_CONSOLE_CLOSE, lang.menuConsoleClose.c_str());
+    }
 
     MenuSkinApplyAll(g_hwndMain);
     DrawMenuBar(g_hwndMain);

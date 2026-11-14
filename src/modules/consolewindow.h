@@ -29,6 +29,9 @@ void ConsoleShow(HWND hwndMain);
 // Close the console window if it is open.
 void ConsoleClose();
 
+// Clear the output area (menu: Console → Clear Output).
+void ConsoleClear();
+
 bool ConsoleIsOpen();
 
 // 编译并运行：编译成功后把刚产出的 exe 送进命令行窗口执行。

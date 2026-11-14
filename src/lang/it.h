@@ -122,5 +122,8 @@ inline LangStrings g_langIT = {
     L"&Italiano",
     L"&Nederlands",
     L"&Türkçe",
-    L"&Riga di comando",
-    L"Compila ed &esegui"};
+    L"&Console",
+    L"Compila ed &esegui",
+    L"Finestra &console\tCtrl+`",
+    L"&Cancella output",
+    L"&Chiudi console"};

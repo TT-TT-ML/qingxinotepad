@@ -133,5 +133,8 @@ inline LangStrings g_langEN = {
     L"Italian",
     L"Dutch",
     L"Turkish",
-    L"&Command Line",
-    L"Compile and &Run"};
+    L"&Console",
+    L"Compile and &Run",
+    L"&Console Window\tCtrl+`",
+    L"&Clear Output",
+    L"&Close Console"};

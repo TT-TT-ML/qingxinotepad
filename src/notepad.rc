@@ -98,8 +98,6 @@ BEGIN
             MENUITEM "&Change Icon...", IDM_VIEW_ICON_CHANGE
             MENUITEM "&Reset to Default", IDM_VIEW_ICON_RESET
         END
-        MENUITEM SEPARATOR
-        MENUITEM "&Command Line\tCtrl+`", IDM_VIEW_CONSOLE
     END
     POPUP "&Language"
     BEGIN
@@ -130,6 +128,13 @@ BEGIN
         MENUITEM "Compile and &Run\tF8", IDM_BUILD_RUN
         MENUITEM "Ignore checks, force compile", IDM_BUILD_FORCE
         MENUITEM "Compile &Settings...", IDM_BUILD_SETTINGS
+    END
+    POPUP "&Console"
+    BEGIN
+        MENUITEM "&Console Window\tCtrl+`", IDM_VIEW_CONSOLE
+        MENUITEM SEPARATOR
+        MENUITEM "&Clear Output", IDM_CONSOLE_CLEAR
+        MENUITEM "&Close Console", IDM_CONSOLE_CLOSE
     END
 END
 IDR_ACCEL ACCELERATORS

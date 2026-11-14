@@ -497,6 +497,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             // 打开自绘命令行窗口，工作目录跟随当前显示的文件
             ConsoleShow(g_hwndMain);
             break;
+        case IDM_CONSOLE_CLEAR:
+            ConsoleClear();
+            break;
+        case IDM_CONSOLE_CLOSE:
+            ConsoleClose();
+            break;
         case IDM_HELP_ABOUT:
             HelpAbout();
             break;

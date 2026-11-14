@@ -122,5 +122,8 @@ inline LangStrings g_langNL = {
     L"&Italiano",
     L"&Nederlands",
     L"&Türkçe",
-    L"&Opdrachtregel",
-    L"Compileren en &uitvoeren"};
+    L"&Console",
+    L"Compileren en &uitvoeren",
+    L"&Consolevenster\tCtrl+`",
+    L"Uitvoer &wissen",
+    L"Console &sluiten"};
