@@ -91,7 +91,7 @@ inline LangStrings g_langEN = {
     L"Cannot open file.",
     L"Cannot save file.",
     L"Error",
-    L"Qingxin Notepad v1.3.0\n\nA fast, lightweight text editor.\n\nBuilt with C++ and Win32 API.\n", //\nModify by 0x2o.net",
+    L"Qingxin Notepad v1.3.1\n\nA fast, lightweight text editor.\n\nBuilt with C++ and Win32 API.\n", //\nModify by 0x2o.net",
 
     L" Ln ",
     L", Col ",

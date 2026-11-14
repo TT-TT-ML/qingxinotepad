@@ -83,7 +83,7 @@ inline LangStrings g_langHI = {
     L"फ़ाइल नहीं खुल सकी।",
     L"फ़ाइल सहेजी नहीं जा सकी।",
     L"त्रुटि",
-    L"Qingxin Notepad v1.3.0\n\nएक तेज़, हल्का टेक्स्ट एडिटर।\n\nC++ और Win32 API से बनाया गया।\n",
+    L"Qingxin Notepad v1.3.1\n\nएक तेज़, हल्का टेक्स्ट एडिटर।\n\nC++ और Win32 API से बनाया गया।\n",
     L" पंक्ति ",
     L", स्तंभ ",
     L"UTF-8",

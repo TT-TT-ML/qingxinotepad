@@ -81,7 +81,7 @@ inline LangStrings g_langZH = {
     L"无法打开文件。",
     L"无法保存文件。",
     L"错误",
-    L"Qingxin Notepad v1.3.0\n\n快速轻量的文本编辑器。\n\n使用 C++ Win32 API 构建。\n",
+    L"Qingxin Notepad v1.3.1\n\n快速轻量的文本编辑器。\n\n使用 C++ Win32 API 构建。\n",
     L"行 ",
     L"，列 ",
     L"UTF-8",

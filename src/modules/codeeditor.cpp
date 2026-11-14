@@ -1000,6 +1000,8 @@ static wchar_t MatchingCloser(wchar_t open)
     case L'[': return L']';
     case L'{': return L'}';
     case L'<': return L'>';
+    case L'"': return L'"';   // 单双引号当括号处理：括号的两侧是同一种引号
+    case L'\'': return L'\'';
     default:    return 0;
     }
 }
@@ -1030,6 +1032,145 @@ static bool CanAutoPair(const EditorState *st, wchar_t closeC)
         return false;
     if (next == L'"' || next == L'\'')
         return false;
+    return true;
+}
+
+static bool IsQuoteChar(wchar_t c)
+{
+    return c == L'"' || c == L'\'';
+}
+
+// 引号补全：后面已经是同一种引号就跳过去，否则成对插入。
+static bool CanAutoPairQuote(const EditorState *st, wchar_t q)
+{
+    if (st->hasSel)
+        return true;
+    if (st->caret > 0 && st->text[st->caret - 1] == L'\\')
+        return false;
+    if (st->caret >= st->text.size())
+        return true;
+    return st->text[st->caret] != q;
+}
+
+// 结构体 / 类 / 枚举 / 联合体的花括号：右侧大括号后面要补一个分号，
+// 其余花括号（函数体、if/for 块、裸语句块）保持原样不加分号。
+static bool StructBraceContext(const EditorState *st)
+{
+    const int line = LineOfOffset(st, st->caret);
+    const size_t ls = LineStart(st, line);
+    std::wstring prefix = st->text.substr(ls, st->caret - ls);
+    while (!prefix.empty() && (prefix.back() == L' ' || prefix.back() == L'\t'))
+        prefix.pop_back();
+    if (prefix.empty())
+        return false;
+    if (prefix.back() == L')' || prefix.back() == L';') // 函数体 / 语句块
+        return false;
+    static const wchar_t *const kTypes[] = { L"struct", L"class", L"enum", L"union", nullptr };
+    size_t i = 0;
+    while (i < prefix.size())
+    {
+        if (!IsIdentifierChar(prefix[i]))
+        {
+            ++i;
+            continue;
+        }
+        size_t j = i;
+        while (j < prefix.size() && IsIdentifierChar(prefix[j]))
+            ++j;
+        const std::wstring w = prefix.substr(i, j - i);
+        for (int k = 0; kTypes[k] != nullptr; ++k)
+        {
+            if (w == kTypes[k])
+                return true;
+        }
+        i = j;
+    }
+    return false;
+}
+
+// 插入 "{};" 并把光标放在两个大括号之间：随后按 Enter 仍会拆成
+// "{" / 缩进空行 / "}" 三行，分号留在右大括号后面。
+static void InsertStructBrace(HWND hwnd, EditorState *st)
+{
+    const size_t at = st->caret;
+    DoInsert(hwnd, st, at, at, L"{};");
+    st->caret = at + 1;
+    st->anchor = st->caret;
+    st->hasSel = false;
+    EnsureCaretVisible(hwnd, st);
+    NotifySelChange(hwnd);
+    InvalidateRect(hwnd, nullptr, FALSE);
+}
+
+/*  语法的强制补全：在代码语言里打完关键字再敲空格，直接带出结构骨架。
+    if / for / while / switch / catch  →  kw () {\n     \n}
+    else / do / try                    →  kw {\n     \n}
+    光标落在圆括号或花括号内部的第一行缩进处。                          */
+struct SynBlock
+{
+    const wchar_t *kw;
+    bool parens; // true: 带圆括号；false: 只有花括号
+};
+
+static const SynBlock kSynBlocks[] = {
+    { L"if", true },     { L"for", true },   { L"while", true }, { L"switch", true },
+    { L"catch", true },  { L"else", false }, { L"do", false },   { L"try", false },
+    { nullptr, false }
+};
+
+static bool ExpandSyntaxBlock(HWND hwnd, EditorState *st)
+{
+    if (!PairEnabled(st))
+        return false;
+    size_t i = st->caret;
+    while (i > 0 && IsIdentifierChar(st->text[i - 1]))
+        --i;
+    if (i == st->caret)
+        return false;
+    const std::wstring word = st->text.substr(i, st->caret - i);
+
+    const SynBlock *hit = nullptr;
+    for (int k = 0; kSynBlocks[k].kw != nullptr; ++k)
+    {
+        if (word == kSynBlocks[k].kw)
+        {
+            hit = &kSynBlocks[k];
+            break;
+        }
+    }
+    if (!hit)
+        return false;
+
+    // 行首缩进
+    const int line = LineOfOffset(st, st->caret);
+    const std::wstring head = LineContent(st, line);
+    size_t p = 0;
+    while (p < head.size() && (head[p] == L' ' || head[p] == L'\t'))
+        ++p;
+    const std::wstring indent = head.substr(0, p);
+    const std::wstring inner = indent + L"    ";
+
+    std::wstring ins;
+    size_t caretOff = 0;
+    if (hit->parens)
+    {
+        ins = L" () {\n" + inner + L"\n" + indent + L"}";
+        caretOff = 2; // 落在 ( 和 ) 之间
+    }
+    else
+    {
+        ins = L" {\n" + inner + L"\n" + indent + L"}";
+        caretOff = 3; // 落在 { 之后
+    }
+
+    const size_t at = st->caret;
+    DoInsert(hwnd, st, at, at, ins);
+    st->caret = at + caretOff;
+    st->anchor = st->caret;
+    st->hasSel = false;
+    EnsureCaretVisible(hwnd, st);
+    NotifySelChange(hwnd);
+    InvalidateRect(hwnd, nullptr, FALSE);
     return true;
 }
 
@@ -2330,8 +2471,17 @@ LRESULT CALLBACK CodeEditorWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
         if (st->compActive && !idChar)
             HideCompletion(hwnd, st);
 
+        // 语法的强制补全：关键字后敲空格直接带出结构骨架（空格被吞掉）。
+        if (c == L' ' && !st->hasSel && ExpandSyntaxBlock(hwnd, st))
+            return 0;
+
         if (PairEnabled(st))
         {
+            if (c == L'{' && StructBraceContext(st) && CanAutoPair(st, L'}'))
+            {
+                InsertStructBrace(hwnd, st);
+                return 0;
+            }
             if (c == L'(' || c == L'[' || c == L'{')
             {
                 if (CanAutoPair(st, MatchingCloser(c)))
@@ -2343,6 +2493,21 @@ LRESULT CALLBACK CodeEditorWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
             else if (c == L'<')
             {
                 if (AnglePairContext(st) && CanAutoPair(st, L'>'))
+                {
+                    InsertPair(hwnd, st, c);
+                    return 0;
+                }
+            }
+            else if (IsQuoteChar(c))
+            {
+                // 单双引号当括号：后面已经是同一个引号就跳过，否则补一个收尾引号。
+                if (!st->hasSel && st->caret < st->text.size() &&
+                    st->text[st->caret] == c)
+                {
+                    MoveCaretTo(hwnd, st, st->caret + 1, false);
+                    return 0;
+                }
+                if (CanAutoPairQuote(st, c))
                 {
                     InsertPair(hwnd, st, c);
                     return 0;

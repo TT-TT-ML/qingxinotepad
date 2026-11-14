@@ -81,7 +81,7 @@ inline LangStrings g_langKO = {
     L"파일을 열 수 없습니다.",
     L"파일을 저장할 수 없습니다.",
     L"오류",
-    L"Qingxin Notepad v1.3.0\n\n빠르고 가벼운 텍스트 편집기.\n\nC++와 Win32 API로 제작.\n",
+    L"Qingxin Notepad v1.3.1\n\n빠르고 가벼운 텍스트 편집기.\n\nC++와 Win32 API로 제작.\n",
     L" 줄 ",
     L", 열 ",
     L"UTF-8",

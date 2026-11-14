@@ -83,7 +83,7 @@ inline LangStrings g_langTR = {
     L"Dosya açılamadı.",
     L"Dosya kaydedilemedi.",
     L"Hata",
-    L"Qingxin Notepad v1.3.0\n\nHızlı ve hafif bir metin düzenleyici.\n\nC++ ve Win32 API ile geliştirildi.\n",
+    L"Qingxin Notepad v1.3.1\n\nHızlı ve hafif bir metin düzenleyici.\n\nC++ ve Win32 API ile geliştirildi.\n",
     L" Sat ",
     L", Süt ",
     L"UTF-8",

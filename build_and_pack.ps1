@@ -1,10 +1,10 @@
 # 一键：编译 Release → 生成单文件安装包 → 更新绿色版 zip
 # 用法：
-#   pwsh -File build_and_pack.ps1                 # 默认 1.3.0
+#   pwsh -File build_and_pack.ps1                 # 默认 1.3.1
 #   pwsh -File build_and_pack.ps1 -Version 1.2.1  # 出新版本
 #   pwsh -File build_and_pack.ps1 -SkipBuild      # 不重新编译，只重打包
 param(
-    [string]$Version = "1.3.0",
+    [string]$Version = "1.3.1",
     [switch]$SkipBuild
 )
 
