@@ -1,4 +1,4 @@
-# 晴溪notepad · Qingxin Notepad 1.4.0
+# 晴溪notepad · Qingxin Notepad 1.4.1
 
 轻量、原生的 Windows 文本 / 代码编辑器，用 C++17 + Win32 API 手写，**界面全部自绘**，不依赖 RichEdit / Qt / .NET，单文件 exe 无第三方运行时。
 
@@ -11,8 +11,8 @@ A lightweight native Windows text & code editor written in C++17 with the Win32 
 | 渠道 | 地址 |
 | --- | --- |
 | 官方下载中心 | <https://ttqx.cc.cd/d/> → 「晴溪notepad文本编辑器 / 1.4.0」（当前构建 _r2，含控制台设置对话框） |
-| 安装版直链 | <https://ttqx.cc.cd/d/get/%E6%99%B4%E6%BA%AAnotepad%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8/1.4.0/qingxinotepad_install_r2.exe> |
-| 绿色版直链 | <https://ttqx.cc.cd/d/get/%E6%99%B4%E6%BA%AAnotepad%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8/1.4.0/qingxinotepad-portable-1.4.0-r2.zip> |
+| 安装版直链 | <https://ttqx.cc.cd/d/get/%E6%99%B4%E6%BA%AAnotepad%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8/1.4.1/qingxinotepad_install.exe> |
+| 绿色版直链 | <https://ttqx.cc.cd/d/get/%E6%99%B4%E6%BA%AAnotepad%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8/1.4.1/qingxinotepad-portable-1.4.1.zip> |
 | 源码 | 本仓库（`main` 分支） |
 
 - **安装版**：单个 `qingxinotepad_install_r2.exe`（文件名带 `_r2` 是因为下载站不支持覆盖同名文件，_r2 即 1.4.0 的当前构建），安装时可选要注册的文件关联扩展名。
@@ -32,7 +32,7 @@ A lightweight native Windows text & code editor written in C++17 with the Win32 
 - 语法高亮：C/C++、Python、JavaScript、HTML/CSS 等，含括号配对标记。
 - **自动括号配对**：`()` `[]` `{}` `<>` 成对补全，收尾括号可直接跳过；**单双引号同样按括号处理**——打 `"` 自动补 `"`，再打同一个引号就跳过而不是重复插入，反斜杠后不配对。
 - **结构体补全**：光标行（含 Allman 风格另起一行的 `{`、带继承列表的 `class Foo : public Bar`）出现 `struct / class / enum / union` 时打 `{`，补成 `{};`，光标停在两花括号之间；回车自动拆成三行，**分号留在右大括号后**。函数体、`if/for` 块等普通花括号保持原样，不加分号，`namespace {}` 也不加分号。
-- **语法的强制补全**：代码语言里打完关键字再敲空格，自动带出结构骨架并定位光标——`if` / `for` / `while` / `switch` / `catch` → `() {}` 三行骨架（光标在圆括号内），`do` / `try` / `namespace` → `{}` 骨架（光标在花括号内），`public` / `private` / `protected`（**只在类体内生效**）与 `default`（**只在 switch 内生效**）→ 补成 `xxx:` 并按包围它的花括号对齐缩进。`template<` 的尖括号也成对补全。
+- **语法的强制补全**：代码语言里打完关键字再敲空格，自动带出结构骨架并定位光标——`if` / `for` / `while` / `switch` / `catch` → `() {}` 三行骨架（光标在圆括号内），`do` / `try` / `namespace`（`using namespace` 这种 using 指令不展开）→ `{}` 骨架（光标在花括号内），`public` / `private` / `protected`（**只在类体内生效**）与 `default`（**只在 switch 内生效**）→ 补成 `xxx:` 并按包围它的花括号对齐缩进。`template<` 的尖括号也成对补全。
 - 自动补全：按已输入前缀过滤符号与库函数，带类型前缀；光标前没有正在输入的词时不弹窗，`Ctrl+Space` 可手动呼出。
 - 代码检查：未定义函数标红行 + 弹窗提示缺头文件；`#include "本地头文件"` 会并入符号集。
 - 多语言编译：选语言直接编译，编译在独立线程跑，错误/警告进自绘报错窗口（黄底警告、红底错误、可滚动），支持忽略检查强制编译。
@@ -131,6 +131,9 @@ build_and_pack.ps1
 ```
 
 ## 版本历史
+
+### 1.4.1
+- **修复 `using namespace` 被展开**：`using namespace std;` 里的 `namespace` 是 using 指令，打完空格不再补出 `{}` 三行骨架，一条指令可以正常写完；`namespace 名字 { }` 的展开不受影响。
 
 ### 1.4.0
 - **控制台（命令行窗口）全面升级**：

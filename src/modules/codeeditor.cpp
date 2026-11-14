@@ -1242,6 +1242,19 @@ static bool ExpandSyntaxBlock(HWND hwnd, EditorState *st)
     if (!hit)
         return false;
 
+    // `using namespace std;` 里的 namespace 是 using 指令，不是命名空间定义：
+    // 它后面不需要大括号，别补骨架（否则一条 using 会被拆成三段）。
+    if (word == L"namespace")
+    {
+        size_t q = i;
+        while (q > 0 && (st->text[q - 1] == L' ' || st->text[q - 1] == L'\t'))
+            --q;
+        const size_t e = q;
+        while (q > 0 && IsIdentifierChar(st->text[q - 1]))
+            --q;
+        if (e > q && st->text.substr(q, e - q) == L"using")
+            return false;
+    }
     int braceLine = -1;
     if (hit->kind == SYN_LABEL)
     {
