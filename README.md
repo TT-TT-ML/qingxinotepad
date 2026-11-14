@@ -127,16 +127,28 @@ pwsh -File build_matrix.ps1 -Version 1.4.4
 - DPI：`main.cpp` 运行时调用 `SetProcessDpiAwarenessContext(PER_MONITOR_AWARE_V2)`（Win10 1703+，旧系统自动回退），因此清单里不声明 `dpiAware`，避免冲突。
 - x86（32 位）与 ARM64 目标：本机 `F:\MinGW` 只有 `x86_64-w64-mingw32` 一套，暂未构建；需要另行安装 `i686`/`aarch64` 工具链后加进 `build_matrix.ps1`。
 
-### Linux
+### Linux（Wine 承载，已发布）
 
-现状（截至 1.4.4）：**Linux 原生二进制尚未产出**，两条路线都不适合在当前环境硬做：
+主程序是纯 Win32 自绘应用，Linux 上通过 **Wine** 运行；启动器、安装脚本与桌面项都是原生 Linux 文件，包在 Windows 上就能构建（`packaging\linux\pack_linux.ps1`）。
 
-| 路线 | 说明 | 阻塞点 |
-| --- | --- | --- |
-| ① Wine 封装（推荐先做） | 保持 Win32 内核零改动，MinGW 版 exe 直接在 Wine 上跑，外套 AppImage / .deb | 需要 Linux 侧装 `wine` 与 AppImage 工具；会话里的云主机 apt 源不通，装不上 |
-| ② 原生 X11 移植 | 把 `HWND/GDI/WM_*` 抽象成 platform 层，新增 X11 后端 | 工程量最大（main/codeeditor/菜单/对话窗/控制台全部依赖 Win32 消息），需要独立迭代，不能一次交付 |
+```
+qingxinotepad-linux-x86_64-1.4.5.tar.gz
+├── qingxi-notepad              # POSIX shell 启动器（选 wine、固定 WINEPREFIX、透传参数）
+├── qingxinotepad.exe           # MinGW-x64 主程序（Wine 加载）
+├── qingxi-notepad.desktop      # 桌面项（MimeType=text/plain）
+├── install.sh                  # ./install.sh（系统）或 ./install.sh --user（~/.local）
+├── LICENSE / README.md
+```
 
-跨平台准备的公共基础（已具备）：源码除 Win32 头文件外无平台相关依赖；`build_and_pack.ps1` / `build_matrix.ps1` 把所有产物集中到 `dist\`；MinGW 构建路径已验证（Linux 上装好 `mingw-w64` 后，同一份源码可直接 `x86_64-w64-mingw32-cmake` 交叉编译出可喂给 Wine 的 exe）。
+| 需求 | 说明 |
+| --- | --- |
+| Wine | `apt install wine64` / `pacman -S wine` / `dnf install wine`；也可 `QINGXI_WINE=/path/to/wine` 指定 |
+| 首次运行 | 自动 `wineboot --init` 到 `~/.local/share/qingxi-notepad/wine`，不污染默认 prefix |
+| 免弹窗 | 启动器已设 `WINEDLLOVERRIDES=mscoree,mshtml=`，不需要 Mono/Gecko |
+
+已验证（云主机 Ubuntu 22.04，无 Wine 环境）：解包后 `sh -n` 语法通过；启动器在缺 exe / 缺 Wine 两种情况下分别给出 `找不到 qingxinotepad.exe`（退出码 1）与安装指引（退出码 127）。**未在带 Wine 的桌面上跑过 GUI**，这是目前唯一未验证的环节。
+
+关于"在 Windows 上交叉编译 Linux 原生程序"：本机 clang（`F:\Qt\Tools\llvm-mingw2217_64\bin\clang.exe`）能生成 `elf64-x86-64` 目标文件，但链接缺 Linux sysroot（`Scrt1.o`、`crti.o`、`libc`），需要 glibc/musl 的 sysroot 才能出可执行文件；zig 分发包下载被限速到 ~8 KB/s，未完成。真要出**原生 Linux 版**，前置条件是把 `HWND/GDI/WM_*` 抽成 platform 层并写 X11 后端，不是加个编译器就能解决。
 
 ## 目录结构
 
