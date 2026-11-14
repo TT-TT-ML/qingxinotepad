@@ -1,4 +1,4 @@
-# 晴溪notepad · Qingxin Notepad 1.3.0
+# 晴溪notepad · Qingxin Notepad 1.3.1
 
 轻量、原生的 Windows 文本 / 代码编辑器，用 C++17 + Win32 API 手写，**界面全部自绘**，不依赖 RichEdit / Qt / .NET，单文件 exe 无第三方运行时。
 
@@ -10,9 +10,9 @@ A lightweight native Windows text & code editor written in C++17 with the Win32 
 
 | 渠道 | 地址 |
 | --- | --- |
-| 官方下载中心 | <https://ttqx.cc.cd/d/> → 「晴溪notepad文本编辑器 / 1.3.0」 |
-| 安装版直链 | <https://ttqx.cc.cd/d/get/%E6%99%B4%E6%BA%AAnotepad%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8/1.3.0/qingxinotepad_install.exe> |
-| 绿色版直链 | <https://ttqx.cc.cd/d/get/%E6%99%B4%E6%BA%AAnotepad%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8/1.3.0/qingxinotepad-portable-1.3.0.zip> |
+| 官方下载中心 | <https://ttqx.cc.cd/d/> → 「晴溪notepad文本编辑器」，按版本取安装版与绿色版 |
+| 安装版直链（1.3.0） | <https://ttqx.cc.cd/d/get/%E6%99%B4%E6%BA%AAnotepad%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8/1.3.0/qingxinotepad_install.exe> |
+| 绿色版直链（1.3.0） | <https://ttqx.cc.cd/d/get/%E6%99%B4%E6%BA%AAnotepad%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8/1.3.0/qingxinotepad-portable-1.3.0.zip> |
 | 源码 | 本仓库（`main` 分支） |
 
 - **安装版**：单个 `qingxinotepad_install.exe`，安装时可选要注册的文件关联扩展名。
@@ -22,13 +22,17 @@ A lightweight native Windows text & code editor written in C++17 with the Win32 
 
 **编辑与排版**
 - 自绘编辑器控件：按单词软换行、折行块行号居中 + GDI 中括号、列选/行选中、光标逐字素移动。
-- 软换行分词规则：空格 / 制表符 / 标点 / 符号都是分隔点；一个连续字母数字串算一个词，行尾放不下就整体下移；超过 15 个字符的超长串（URL、压缩代码）允许硬断。
+- 软换行分词规则：**空格之外，任何标点、运算符、符号都能断开单词**；连续字母数字串算一个词，行尾放不下整体下移；**超过 15 个字符的串不再算单词**（URL、压缩代码），行尾允许硬断。
 - **中日韩按「一字即一词」处理**：汉字、假名、韩文、全角形式在行尾逐字断开，不再整段搬家。
 - 中文 / 阿拉伯文等宽字符按 2 列布局，混合排版与 RTL 菜单可用。
 - 按 `Down` 在折行块内直接跳到**下一逻辑行**（折行行属于同一行，不再逐视觉行爬）。
+- 自动换行是可选开关，在**格式 → 自动换行**（`Alt+W`）里勾选，状态记在注册表 `Software\LegacyNotepad\WordWrap`。
 
 **代码能力**
 - 语法高亮：C/C++、Python、JavaScript、HTML/CSS 等，含括号配对标记。
+- **自动括号配对**：`()` `[]` `{}` `<>` 成对补全，收尾括号可直接跳过；**单双引号同样按括号处理**——打 `"` 自动补 `"`，再打同一个引号就跳过而不是重复插入，反斜杠后不配对。
+- **结构体补全**：光标行出现 `struct / class / enum / union` 时打 `{`，补成 `{};`，光标停在两花括号之间；回车自动拆成三行，**分号留在右大括号后**。函数体、`if/for` 块等普通花括号保持原样，不加分号。
+- **语法的强制补全**：代码语言里打完关键字再敲空格，自动带出结构骨架并定位光标——`if` / `for` / `while` / `switch` / `catch` → `() {}` 三行骨架（光标在圆括号内），`else` / `do` / `try` → `{}` 骨架（光标在花括号内）。
 - 自动补全：按已输入前缀过滤符号与库函数，带类型前缀；光标前没有正在输入的词时不弹窗，`Ctrl+Space` 可手动呼出。
 - 代码检查：未定义函数标红行 + 弹窗提示缺头文件；`#include "本地头文件"` 会并入符号集。
 - 多语言编译：选语言直接编译，编译在独立线程跑，错误/警告进自绘报错窗口（黄底警告、红底错误、可滚动），支持忽略检查强制编译。
@@ -66,7 +70,7 @@ cmake --build build --config Release
 ## 打包（安装包 + 绿色包）
 
 ```powershell
-pwsh -File build_and_pack.ps1              # 默认版本 1.3.0
+pwsh -File build_and_pack.ps1              # 默认版本 1.3.1
 pwsh -File build_and_pack.ps1 -Version 1.3.1
 pwsh -File build_and_pack.ps1 -SkipBuild   # 只重新打包，不重编译
 ```
@@ -114,6 +118,13 @@ build_and_pack.ps1
 ```
 
 ## 版本历史
+
+### 1.3.1
+- **折行细分词规则**：只有空格（和制表符）算天然分隔，其余标点、运算符、符号一律能断开单词；**长度超过 15 个字符的连续串不再视作单词**，行尾直接硬断。
+- **自动换行开关**：收进「格式 → 自动换行」，勾选状态随注册表保存。
+- **单双引号当括号**：成对补全，收尾引号跳过，反斜杠后不配对。
+- **结构体补全**：`struct / class / enum / union` 的花括号补成 `{};`，回车后分号留在 `}` 后面；普通语句块与函数体不加分号。
+- **语法级强制补全**：`if / for / while / switch / catch` + 空格带出 `() {}` 骨架，`else / do / try` + 空格带出 `{}` 骨架。
 
 ### 1.3.0
 - **深色模式菜单**：所有菜单项（含「背景 / 图标 / 最近文件 / 语言 / 编译 / 编码 / 行尾」等子菜单父项）与分隔线全部改为自绘，子菜单箭头用 GDI 绘制，弹出菜单内边距与边框一并染深色，深色下不再出现白色条块。
