@@ -10,12 +10,12 @@ A lightweight native Windows text & code editor written in C++17 with the Win32 
 
 | 渠道 | 地址 |
 | --- | --- |
-| 官方下载中心 | <https://ttqx.cc.cd/d/> → 「晴溪notepad文本编辑器 / 1.4.0」（当前构建 _r2，含控制台设置对话框） |
-| 安装版直链 | <https://ttqx.cc.cd/d/get/%E6%99%B4%E6%BA%AAnotepad%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8/1.4.2/qingxinotepad_install_1.4.2.exe> |
+| 官方下载中心 | <https://ttqx.cc.cd/d/> → 「晴溪notepad文本编辑器 / 1.4.2」 |
+| 安装版直链 | <https://ttqx.cc.cd/d/get/%E6%99%B4%E6%BA%AAnotepad%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8/1.4.2/qingxinotepad_install.exe> |
 | 绿色版直链 | <https://ttqx.cc.cd/d/get/%E6%99%B4%E6%BA%AAnotepad%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8/1.4.2/qingxinotepad-portable-1.4.2.zip> |
 | 源码 | 本仓库（`main` 分支） |
 
-- **安装版**：单个 `qingxinotepad_install_r2.exe`（文件名带 `_r2` 是因为下载站不支持覆盖同名文件，_r2 即 1.4.0 的当前构建），安装时可选要注册的文件关联扩展名。
+- **安装版**：单个 `qingxinotepad_install.exe`，安装时可选要注册的文件关联扩展名。
 - **绿色版**：qingxinotepad-portable-1.4.0-r2.zip 解压后直接运行 `qingxinotepad.exe`，配置写在 exe 同目录的 `qingxinotepad.ini`，不往系统里写任何东西。
 
 ## 功能
