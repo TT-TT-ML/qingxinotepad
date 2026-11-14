@@ -11,7 +11,7 @@ A lightweight native Windows text & code editor written in C++17 with the Win32 
 | 渠道 | 地址 |
 | --- | --- |
 | 官方下载中心 | <https://ttqx.cc.cd/d/> → 「晴溪notepad文本编辑器 / 1.4.0」（当前构建 _r2，含控制台设置对话框） |
-| 安装版直链 | <https://ttqx.cc.cd/d/get/%E6%99%B4%E6%BA%AAnotepad%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8/1.4.2/qingxinotepad_install.exe> |
+| 安装版直链 | <https://ttqx.cc.cd/d/get/%E6%99%B4%E6%BA%AAnotepad%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8/1.4.2/qingxinotepad_install_1.4.2.exe> |
 | 绿色版直链 | <https://ttqx.cc.cd/d/get/%E6%99%B4%E6%BA%AAnotepad%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8/1.4.2/qingxinotepad-portable-1.4.2.zip> |
 | 源码 | 本仓库（`main` 分支） |
 
