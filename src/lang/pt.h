@@ -124,4 +124,5 @@ inline LangStrings g_langPT = {
     L"Compilar e &executar",
     L"Janela do &console\tCtrl+`",
     L"&Limpar saída",
-    L"&Fechar console"};
+    L"&Fechar console",
+    L"&Configurações..."};

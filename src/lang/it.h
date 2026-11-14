@@ -126,4 +126,5 @@ inline LangStrings g_langIT = {
     L"Compila ed &esegui",
     L"Finestra &console\tCtrl+`",
     L"&Cancella output",
-    L"&Chiudi console"};
+    L"&Chiudi console",
+    L"&Impostazioni..."};

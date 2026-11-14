@@ -132,6 +132,7 @@ BEGIN
     POPUP "&Console"
     BEGIN
         MENUITEM "&Console Window\tCtrl+`", IDM_VIEW_CONSOLE
+        MENUITEM "&Settings...", IDM_CONSOLE_SETTINGS
         MENUITEM SEPARATOR
         MENUITEM "&Clear Output", IDM_CONSOLE_CLEAR
         MENUITEM "&Close Console", IDM_CONSOLE_CLOSE

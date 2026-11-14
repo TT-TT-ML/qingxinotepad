@@ -500,6 +500,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         case IDM_CONSOLE_CLEAR:
             ConsoleClear();
             break;
+        case IDM_CONSOLE_SETTINGS:
+            ConsoleShowSettings(g_hwndMain);
+            break;
         case IDM_CONSOLE_CLOSE:
             ConsoleClose();
             break;

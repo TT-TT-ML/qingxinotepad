@@ -124,4 +124,5 @@ inline LangStrings g_langDE = {
     L"Kompilieren und &ausführen",
     L"&Konsolenfenster\tCtrl+`",
     L"&Ausgabe löschen",
-    L"Konsole &schließen"};
+    L"Konsole &schließen",
+    L"&Einstellungen..."};

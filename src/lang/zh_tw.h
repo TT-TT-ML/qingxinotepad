@@ -124,4 +124,5 @@ inline LangStrings g_langZH_TW = {
     L"編譯並執行(&R)",
     L"命令列視窗(&C)\tCtrl+`",
     L"清除輸出(&L)",
-    L"關閉命令列視窗(&X)"};
+    L"關閉命令列視窗(&X)",
+    L"設定(&S)..."};

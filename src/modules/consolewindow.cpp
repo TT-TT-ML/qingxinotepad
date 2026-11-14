@@ -60,6 +60,7 @@ namespace
         int curPos = 0;          // 当前行写入位置（支持 \r 覆盖、\b 退格）
         std::wstring pending;    // 未收完的 ESC 序列
         unsigned short curColor = 0;
+        bool color = true;       // 是否启用 ANSI 彩色输出
 
         std::wstring input;
         int caret = 0;
@@ -179,6 +180,8 @@ namespace
             g_defaultCols = static_cast<int>(v);
         if (StorageGetDword(CONSOLE_SETTINGS_KEY, L"ConsoleFontSize", &v) && v >= 10 && v <= 32)
             g_con.fontPx = static_cast<int>(v);
+        if (StorageGetDword(CONSOLE_SETTINGS_KEY, L"ConsoleColor", &v))
+            g_con.color = (v != 0);
 
         std::wstring hist;
         if (StorageGetString(CONSOLE_SETTINGS_KEY, L"ConsoleHistory", &hist) && !hist.empty())
@@ -207,6 +210,11 @@ namespace
     void SaveConsoleFont(int px)
     {
         StorageSetDword(CONSOLE_SETTINGS_KEY, L"ConsoleFontSize", static_cast<DWORD>(px));
+    }
+
+    void SaveConsoleColor(bool on)
+    {
+        StorageSetDword(CONSOLE_SETTINGS_KEY, L"ConsoleColor", on ? 1u : 0u);
     }
 
     void SaveConsoleHistory()
@@ -419,6 +427,12 @@ namespace
         const std::wstring body = seq.substr(2, seq.size() - 3);
         if (finalCh == L'm')
         {
+            // 关闭彩色输出时忽略所有 SGR 取值，后续字符一律用主题默认色
+            if (!g_con.color)
+            {
+                g_con.curColor = 0;
+                return;
+            }
             std::vector<int> codes;
             size_t start = 0;
             while (start <= body.size())
@@ -683,6 +697,138 @@ namespace
         RedrawConsole();
     }
 
+    // 行/列：写默认值 + 注册表，并立即按新网格调整窗口
+    void ApplyGrid(int rows, int cols)
+    {
+        g_con.rows = ClampInt(rows, 3, 60);
+        g_con.cols = ClampInt(cols, 20, 300);
+        g_defaultRows = g_con.rows;
+        g_defaultCols = g_con.cols;
+        SaveConsoleSize(g_con.rows, g_con.cols);
+        g_con.layoutDirty = true;
+        g_con.followTail = true;
+        if (g_con.hwnd)
+        {
+            EnsureSize();
+            RedrawConsole();
+        }
+    }
+
+    void SetColorEnabled(bool on)
+    {
+        g_con.color = on;
+        if (!on)
+            g_con.curColor = 0;
+        SaveConsoleColor(on);
+        RedrawConsole();
+    }
+
+    // 命令行窗口的设置对话框：行数 / 列数 / 字号 / 是否彩色
+    INT_PTR CALLBACK ConsoleSettingsDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+    {
+        switch (msg)
+        {
+        case WM_INITDIALOG:
+        {
+            wchar_t buf[32];
+            wsprintfW(buf, L"%d", g_con.rows);
+            SetWindowTextW(GetDlgItem(hDlg, 1001), buf);
+            wsprintfW(buf, L"%d", g_con.cols);
+            SetWindowTextW(GetDlgItem(hDlg, 1002), buf);
+            wsprintfW(buf, L"%d", g_con.fontPx);
+            SetWindowTextW(GetDlgItem(hDlg, 1003), buf);
+            CheckDlgButton(hDlg, 1004, g_con.color ? BST_CHECKED : BST_UNCHECKED);
+            return TRUE;
+        }
+        case WM_COMMAND:
+            if (LOWORD(wParam) == IDOK)
+            {
+                BOOL ok1 = FALSE, ok2 = FALSE, ok3 = FALSE;
+                const int rows = static_cast<int>(GetDlgItemInt(hDlg, 1001, &ok1, FALSE));
+                const int cols = static_cast<int>(GetDlgItemInt(hDlg, 1002, &ok2, FALSE));
+                const int px = static_cast<int>(GetDlgItemInt(hDlg, 1003, &ok3, FALSE));
+                if (ok1 && ok2 && ok3 && rows >= 3 && rows <= 60 && cols >= 20 && cols <= 300 &&
+                    px >= 10 && px <= 32)
+                {
+                    SetFontSize(px);
+                    ApplyGrid(rows, cols);
+                    SetColorEnabled(IsDlgButtonChecked(hDlg, 1004) == BST_CHECKED);
+                    DestroyWindow(hDlg);
+                }
+                else
+                {
+                    MessageBoxW(hDlg, Tr(L"范围：行 3-60、列 20-300、字号 10-32。",
+                                         L"Range: rows 3-60, columns 20-300, font size 10-32.").c_str(),
+                                Tr(L"数值超出范围", L"Value out of range").c_str(), MB_OK | MB_ICONWARNING);
+                }
+                return TRUE;
+            }
+            if (LOWORD(wParam) == IDCANCEL)
+            {
+                DestroyWindow(hDlg);
+                return TRUE;
+            }
+            break;
+        case WM_CLOSE:
+            DestroyWindow(hDlg);
+            return TRUE;
+        }
+        return DefDlgProcW(hDlg, msg, wParam, lParam);
+    }
+
+    // 建一个和「转到」对话框同款的 #32770 面板，控件全部手建
+    void ShowSettingsDialog(HWND owner)
+    {
+        HWND hDlg = CreateWindowExW(WS_EX_DLGMODALFRAME, L"#32770",
+                                    Tr(L"命令行设置", L"Console settings").c_str(),
+                                    WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_VISIBLE,
+                                    100, 100, 320, 230,
+                                    owner, nullptr, GetModuleHandleW(nullptr), nullptr);
+        if (!hDlg)
+            return;
+
+        HFONT hFont = reinterpret_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT));
+        struct Item { const wchar_t *cls; const std::wstring &text; DWORD style; int x, y, w, h; int id; };
+        const std::wstring lblRows = Tr(L"行数", L"Rows");
+        const std::wstring lblCols = Tr(L"列数", L"Columns");
+        const std::wstring lblFont = Tr(L"字号（像素）", L"Font size (px)");
+        const std::wstring lblColor = Tr(L"启用 ANSI 彩色输出", L"ANSI colored output");
+        const std::wstring hint = Tr(L"行 3-60、列 20-300、字号 10-32", L"Rows 3-60, columns 20-300, font 10-32");
+
+        Item items[] = {
+            {L"STATIC", lblRows, WS_CHILD | WS_VISIBLE, 18, 20, 92, 16, 0},
+            {L"EDIT", lblRows, WS_CHILD | WS_VISIBLE | ES_NUMBER | ES_AUTOHSCROLL, 118, 17, 70, 22, 1001},
+            {L"STATIC", lblCols, WS_CHILD | WS_VISIBLE, 18, 52, 92, 16, 0},
+            {L"EDIT", lblCols, WS_CHILD | WS_VISIBLE | ES_NUMBER | ES_AUTOHSCROLL, 118, 49, 70, 22, 1002},
+            {L"STATIC", lblFont, WS_CHILD | WS_VISIBLE, 18, 84, 92, 16, 0},
+            {L"EDIT", lblFont, WS_CHILD | WS_VISIBLE | ES_NUMBER | ES_AUTOHSCROLL, 118, 81, 70, 22, 1003},
+            {L"BUTTON", lblColor, WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX, 18, 116, 260, 22, 1004},
+            {L"STATIC", hint, WS_CHILD | WS_VISIBLE, 18, 142, 280, 16, 0},
+        };
+        for (const Item &it : items)
+        {
+            const DWORD ex = (it.cls[0] == L'E') ? WS_EX_CLIENTEDGE : 0;
+            HWND h = CreateWindowExW(ex, it.cls, it.text.c_str(), it.style,
+                                     it.x, it.y, it.w, it.h, hDlg,
+                                     reinterpret_cast<HMENU>(static_cast<INT_PTR>(it.id)), nullptr, nullptr);
+            if (h)
+                SendMessageW(h, WM_SETFONT, reinterpret_cast<WPARAM>(hFont), TRUE);
+        }
+        CreateWindowExW(0, L"BUTTON", Tr(L"确定", L"OK").c_str(),
+                        WS_CHILD | WS_VISIBLE | BS_DEFPUSHBUTTON, 62, 176, 88, 26, hDlg,
+                        reinterpret_cast<HMENU>(IDOK), nullptr, nullptr);
+        CreateWindowExW(0, L"BUTTON", Tr(L"取消", L"Cancel").c_str(),
+                        WS_CHILD | WS_VISIBLE, 168, 176, 88, 26, hDlg,
+                        reinterpret_cast<HMENU>(IDCANCEL), nullptr, nullptr);
+        for (HWND h = GetWindow(hDlg, GW_CHILD); h; h = GetWindow(h, GW_HWNDNEXT))
+            SendMessageW(h, WM_SETFONT, reinterpret_cast<WPARAM>(hFont), TRUE);
+
+        ConsoleSettingsDlgProc(hDlg, WM_INITDIALOG, 0, 0);
+        SetWindowLongPtrW(hDlg, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(ConsoleSettingsDlgProc));
+        SetFocus(GetDlgItem(hDlg, 1001));
+        SendMessageW(GetDlgItem(hDlg, 1001), EM_SETSEL, 0, -1);
+    }
+
     // ---- 绘制 -----------------------------------------------------------
 
     // 基本 16 色（ANSI 顺序：0 黑 / 1 红 / 2 绿 / 3 黄 / 4 蓝 / 5 品红 / 6 青 / 7 白）
@@ -732,6 +878,8 @@ namespace
 
     COLORREF AnsiColor(unsigned short idx, bool dark, COLORREF def)
     {
+        if (!g_con.color)
+            return def;
         if (idx == 0)
             return def;
         if (idx <= 16)
@@ -879,10 +1027,10 @@ namespace
             int k = r.first;
             while (k < r.last && k < static_cast<int>(ln.cells.size()))
             {
-                const unsigned short color = ln.cells[static_cast<size_t>(k)].color;
+                const unsigned short color = g_con.color ? ln.cells[static_cast<size_t>(k)].color : 0;
                 std::wstring run;
                 while (k < r.last && k < static_cast<int>(ln.cells.size()) &&
-                       ln.cells[static_cast<size_t>(k)].color == color)
+                       (g_con.color ? ln.cells[static_cast<size_t>(k)].color : 0) == color)
                 {
                     run += ln.cells[static_cast<size_t>(k)].ch == 0 ? L' ' : ln.cells[static_cast<size_t>(k)].ch;
                     ++k;
@@ -2461,6 +2609,12 @@ void ConsoleClear()
     g_con.pending.clear();
     g_con.curColor = 0;
     ClearOutput();
+}
+
+// 菜单「控制台 → 设置…」：行数 / 列数 / 字号 / 是否彩色，改完立即生效并写入注册表。
+void ConsoleShowSettings(HWND owner)
+{
+    ShowSettingsDialog(g_con.hwnd ? g_con.hwnd : owner);
 }
 
 void ConsoleRunBuiltExe(const std::wstring &exePath)

@@ -199,6 +199,7 @@ void UpdateMenuStrings()
         ModifyMenuW(hMenu, 7, MF_BYPOSITION | MF_STRING | MF_POPUP,
                     reinterpret_cast<UINT_PTR>(hConsoleMenu), lang.menuConsole.c_str());
         ModifyMenuW(hConsoleMenu, IDM_VIEW_CONSOLE, MF_BYCOMMAND | MF_STRING, IDM_VIEW_CONSOLE, lang.menuConsoleOpen.c_str());
+        ModifyMenuW(hConsoleMenu, IDM_CONSOLE_SETTINGS, MF_BYCOMMAND | MF_STRING, IDM_CONSOLE_SETTINGS, lang.menuConsoleSettings.c_str());
         ModifyMenuW(hConsoleMenu, IDM_CONSOLE_CLEAR, MF_BYCOMMAND | MF_STRING, IDM_CONSOLE_CLEAR, lang.menuConsoleClear.c_str());
         ModifyMenuW(hConsoleMenu, IDM_CONSOLE_CLOSE, MF_BYCOMMAND | MF_STRING, IDM_CONSOLE_CLOSE, lang.menuConsoleClose.c_str());
     }

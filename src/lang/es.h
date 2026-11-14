@@ -124,4 +124,5 @@ inline LangStrings g_langES = {
     L"Compilar y &ejecutar",
     L"Ventana de &consola\tCtrl+`",
     L"&Borrar salida",
-    L"&Cerrar consola"};
+    L"&Cerrar consola",
+    L"&Configuración..."};

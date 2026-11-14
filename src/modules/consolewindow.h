@@ -32,6 +32,9 @@ void ConsoleClose();
 // Clear the output area (menu: Console → Clear Output).
 void ConsoleClear();
 
+// Show the console settings dialog: rows, columns, font size, ANSI colors.
+void ConsoleShowSettings(HWND owner);
+
 bool ConsoleIsOpen();
 
 // 编译并运行：编译成功后把刚产出的 exe 送进命令行窗口执行。
