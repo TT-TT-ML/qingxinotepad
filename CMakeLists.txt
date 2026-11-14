@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(qingxinotepad VERSION 1.4.3 LANGUAGES CXX)
+project(qingxinotepad VERSION 1.4.4 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -12,7 +12,8 @@ option(LEGACY_NOTEPAD_WERROR "Treat warnings as errors" OFF)
 
 if(MSVC)
     add_compile_options(/W4 /WX /permissive- /utf-8)
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS /ENTRY:wWinMainCRTStartup")
+    # 清单由 src/notepad.rc 内嵌（RT_MANIFEST 1），关闭链接器自动生成，避免 CVT1100 资源重复
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS /ENTRY:wWinMainCRTStartup /MANIFEST:NO")
 else()
     add_compile_options(-Wall -Wextra -municode -Wno-error=missing-field-initializers)
     if(LEGACY_NOTEPAD_WERROR)
@@ -53,6 +54,7 @@ add_executable(qingxinotepad WIN32
     src/modules/presets.cpp
     src/modules/symbols.cpp
     src/notepad.rc
+    src/notepad.manifest
 )
 
 target_include_directories(qingxinotepad PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/src/modules)

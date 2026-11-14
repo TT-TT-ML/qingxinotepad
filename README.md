@@ -1,4 +1,4 @@
-# 晴溪notepad · Qingxi Notepad 1.4.3
+# 晴溪notepad · Qingxi Notepad 1.4.4
 
 轻量、原生的 Windows 文本 / 代码编辑器，用 C++17 + Win32 API 手写，**界面全部自绘**，不依赖 RichEdit / Qt / .NET，单文件 exe 无第三方运行时。
 
@@ -10,13 +10,13 @@ A lightweight native Windows text & code editor written in C++17 with the Win32 
 
 | 渠道 | 地址 |
 | --- | --- |
-| 官方下载中心 | <https://ttqx.cc.cd/d/> → 「晴溪notepad文本编辑器 / 1.4.3」 |
-| 安装版直链 | <https://ttqx.cc.cd/d/get/%E6%99%B4%E6%BA%AAnotepad%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8/1.4.3/qingxinotepad_install.exe> |
-| 绿色版直链 | <https://ttqx.cc.cd/d/get/%E6%99%B4%E6%BA%AAnotepad%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8/1.4.3/qingxinotepad-portable-1.4.3.zip> |
+| 官方下载中心 | <https://ttqx.cc.cd/d/> → 「晴溪notepad文本编辑器 / 1.4.4」 |
+| 安装版直链 | <https://ttqx.cc.cd/d/get/%E6%99%B4%E6%BA%AAnotepad%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8/1.4.4/qingxinotepad_install.exe> |
+| 绿色版直链 | <https://ttqx.cc.cd/d/get/%E6%99%B4%E6%BA%AAnotepad%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8/1.4.4/qingxinotepad-portable-1.4.4.zip> |
 | 源码 | 本仓库（`main` 分支） |
 
 - **安装版**：单个 `qingxinotepad_install.exe`，安装时可选要注册的文件关联扩展名。
-- **绿色版**：`qingxinotepad-portable-1.4.3.zip` 解压后直接运行 `qingxinotepad.exe`，配置写在 exe 同目录的 `qingxinotepad.ini`，不往系统里写任何东西。
+- **绿色版**：`qingxinotepad-portable-1.4.4.zip` 解压后直接运行 `qingxinotepad.exe`，配置写在 exe 同目录的 `qingxinotepad.ini`，不往系统里写任何东西。
 
 ## 功能
 
@@ -104,6 +104,40 @@ pwsh -File build_and_pack.ps1 -SkipBuild   # 只重新打包，不重编译
 
 同一个 exe 两种模式都支持；便携模式下不往自身目录以外写任何文件。
 
+## 跨平台
+
+### Windows 构建矩阵
+
+| 目标 | 编译器 | 命令 | 产物 |
+| --- | --- | --- | --- |
+| Windows x64（官方） | MSVC 19.x（VS 2026 生成器） | `cmake --build build --config Release` | `build\Release\qingxinotepad.exe`，静态 CRT，Win7+ |
+> 编译前请先关掉正在运行的 `qingxinotepad.exe`，否则链接器无法覆盖同名文件。
+
+一条命令可同时产出两个 Windows 构建：
+
+```powershell
+pwsh -File build_matrix.ps1 -Version 1.4.4
+# 只跑某一个：-SkipMinGW / -SkipMSVC
+```
+
+### Windows 兼容性
+
+- `src/notepad.manifest` 内嵌为 RT_MANIFEST：声明 Win7/8/8.1/10/11 `supportedOS`、`longPathAware`、`asInvoker`、Common-Controls v6；MSVC 侧以 `/MANIFEST:NO` 关闭链接器自动清单，避免 CVT1100 资源重复。
+- `src/notepad.rc` 内嵌 `VERSIONINFO`（1.4.4.0）：资源管理器属性页可见 `Qingxi Notepad` 与版本号。
+- DPI：`main.cpp` 运行时调用 `SetProcessDpiAwarenessContext(PER_MONITOR_AWARE_V2)`（Win10 1703+，旧系统自动回退），因此清单里不声明 `dpiAware`，避免冲突。
+- x86（32 位）与 ARM64 目标：本机 `F:\MinGW` 只有 `x86_64-w64-mingw32` 一套，暂未构建；需要另行安装 `i686`/`aarch64` 工具链后加进 `build_matrix.ps1`。
+
+### Linux
+
+现状（截至 1.4.4）：**Linux 原生二进制尚未产出**，两条路线都不适合在当前环境硬做：
+
+| 路线 | 说明 | 阻塞点 |
+| --- | --- | --- |
+| ① Wine 封装（推荐先做） | 保持 Win32 内核零改动，MinGW 版 exe 直接在 Wine 上跑，外套 AppImage / .deb | 需要 Linux 侧装 `wine` 与 AppImage 工具；会话里的云主机 apt 源不通，装不上 |
+| ② 原生 X11 移植 | 把 `HWND/GDI/WM_*` 抽象成 platform 层，新增 X11 后端 | 工程量最大（main/codeeditor/菜单/对话窗/控制台全部依赖 Win32 消息），需要独立迭代，不能一次交付 |
+
+跨平台准备的公共基础（已具备）：源码除 Win32 头文件外无平台相关依赖；`build_and_pack.ps1` / `build_matrix.ps1` 把所有产物集中到 `dist\`；MinGW 构建路径已验证（Linux 上装好 `mingw-w64` 后，同一份源码可直接 `x86_64-w64-mingw32-cmake` 交叉编译出可喂给 Wine 的 exe）。
+
 ## 目录结构
 
 ```
@@ -132,6 +166,11 @@ build_and_pack.ps1
 ```
 
 ## 版本历史
+
+### 1.4.4
+- **跨平台构建矩阵**：`build_matrix.ps1` 一次产出 MSVC x64 与 MinGW-w64 x64 两个构建；MinGW 版为静态链接的免安装包，不依赖 VC++ 运行库。
+- **Windows 兼容性补全**：新增应用清单（`src/notepad.manifest`），声明 Win7/8/8.1/10/11 `supportedOS`、`longPathAware`、`asInvoker` 与 Common-Controls v6；exe 内嵌 `VERSIONINFO`（1.4.4.0，ProductName `Qingxi Notepad`），资源管理器属性里可见版本号。
+- 构建清单：MSVC x64（安装版 / 官方绿色包）、MinGW-w64 GCC x64（`-mingw-x64` 绿色包）、Linux 侧待补（见 README「跨平台」一节）。
 
 ### 1.4.3
 - **命名统一**：程序内文案、安装包描述、下载库的 User-Agent 全部统一为 `Qingxi Notepad`（晴溪），不再混用 `Qingxin` 拼写。
