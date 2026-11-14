@@ -3,7 +3,7 @@
 #include "lang.h"
 
 inline LangStrings g_langTR = {
-    L"Qingxin Notepad",
+    L"Qingxi Notepad",
     L"Adsız",
     L"&Dosya",
     L"&Yeni\tCtrl+N",
@@ -58,7 +58,7 @@ inline LangStrings g_langTR = {
     L"Pencere &Saydamlığı...",
     L"Her Zaman &Üstte",
     L"&Yardım",
-    L"Qingxin Notepad &Hakkında",
+    L"Qingxi Notepad &Hakkında",
     L"&Güncellemeleri Denetle",
     L"&Dil",
     L"&English",
@@ -83,7 +83,7 @@ inline LangStrings g_langTR = {
     L"Dosya açılamadı.",
     L"Dosya kaydedilemedi.",
     L"Hata",
-    L"Qingxin Notepad v1.3.1\n\nHızlı ve hafif bir metin düzenleyici.\n\nC++ ve Win32 API ile geliştirildi.\n",
+    L"Qingxi Notepad v1.4.0\n\nHızlı ve hafif bir metin düzenleyici.\n\nC++ ve Win32 API ile geliştirildi.\n",
     L" Sat ",
     L", Süt ",
     L"UTF-8",
@@ -121,4 +121,6 @@ inline LangStrings g_langTR = {
     L"&हिन्दी",
     L"&Italiano",
     L"&Nederlands",
-    L"&Türkçe"};
+    L"&Türkçe",
+    L"&Komut satırı",
+    L"Derle ve &çalıştır"};

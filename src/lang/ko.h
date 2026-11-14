@@ -1,7 +1,7 @@
 #pragma once
 #include "lang.h"
 inline LangStrings g_langKO = {
-    L"Qingxin Notepad",
+    L"Qingxi Notepad",
     L"제목 없음",
     L"파일(&F)",
     L"새로 만들기(&N)\tCtrl+N",
@@ -56,7 +56,7 @@ inline LangStrings g_langKO = {
     L"창 투명도(&T)...",
     L"항상 위(&A)",
     L"도움말(&H)",
-    L"Qingxin Notepad 정보(&A)",
+    L"Qingxi Notepad 정보(&A)",
     L"업데이트 확인(&U)",
     L"언어(&L)",
     L"&English",
@@ -81,7 +81,7 @@ inline LangStrings g_langKO = {
     L"파일을 열 수 없습니다.",
     L"파일을 저장할 수 없습니다.",
     L"오류",
-    L"Qingxin Notepad v1.3.1\n\n빠르고 가벼운 텍스트 편집기.\n\nC++와 Win32 API로 제작.\n",
+    L"Qingxi Notepad v1.4.0\n\n빠르고 가벼운 텍스트 편집기.\n\nC++와 Win32 API로 제작.\n",
     L" 줄 ",
     L", 열 ",
     L"UTF-8",
@@ -119,4 +119,6 @@ inline LangStrings g_langKO = {
     L"힌디어",
     L"이탈리아어",
     L"네덜란드어",
-    L"터키어"};
+    L"터키어",
+    L"명령줄(&C)",
+    L"빌드 후 실행(&R)"};

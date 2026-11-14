@@ -1,7 +1,7 @@
 #pragma once
 #include "lang.h"
 inline LangStrings g_langRU = {
-    L"Qingxin Notepad",
+    L"Qingxi Notepad",
     L"Без имени",
     L"&Файл",
     L"&Создать\tCtrl+N",
@@ -56,7 +56,7 @@ inline LangStrings g_langRU = {
     L"&Прозрачность окна...",
     L"Поверх &всех окон",
     L"&Справка",
-    L"&О программе Qingxin Notepad",
+    L"&О программе Qingxi Notepad",
     L"&Проверить обновления",
     L"&Язык",
     L"&English",
@@ -81,7 +81,7 @@ inline LangStrings g_langRU = {
     L"Не удаётся открыть файл.",
     L"Не удаётся сохранить файл.",
     L"Ошибка",
-    L"Qingxin Notepad v1.3.1\n\nБыстрый и лёгкий текстовый редактор.\n\nСоздан на C++ и Win32 API.\n",
+    L"Qingxi Notepad v1.4.0\n\nБыстрый и лёгкий текстовый редактор.\n\nСоздан на C++ и Win32 API.\n",
     L" Стр ",
     L", Стл ",
     L"UTF-8",
@@ -119,4 +119,6 @@ inline LangStrings g_langRU = {
     L"&Хинди",
     L"&Итальянский",
     L"&Нидерландский",
-    L"&Турецкий"};
+    L"&Турецкий",
+    L"&Командная строка",
+    L"Компиляция и &запуск"};

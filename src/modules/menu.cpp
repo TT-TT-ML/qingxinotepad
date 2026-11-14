@@ -170,6 +170,9 @@ void UpdateMenuStrings()
             ModifyMenuW(hSub, IDM_VIEW_ICON_RESET, MF_BYCOMMAND | MF_STRING, IDM_VIEW_ICON_RESET, lang.menuIconReset.c_str());
             break;
         }
+
+        // 命令行（Ctrl+`）：打开自绘命令行窗口
+        ModifyMenuW(hViewMenu, IDM_VIEW_CONSOLE, MF_BYCOMMAND | MF_STRING, IDM_VIEW_CONSOLE, lang.menuConsole.c_str());
     }
 
     HMENU hLangMenu = GetSubMenu(hMenu, 4);
@@ -220,6 +223,9 @@ void RebuildBuildMenu()
 
     // 2) Compile current file (F7).
     AppendMenuW(hBuild, MF_STRING, IDM_BUILD_COMPILE, lang.menuCompile.c_str());
+
+    // 2a) Compile and run the result inside the console window (F8).
+    AppendMenuW(hBuild, MF_STRING, IDM_BUILD_RUN, lang.menuCompileRun.c_str());
 
     // 2b) Ignore checks, force compile.
     AppendMenuW(hBuild, MF_STRING, IDM_BUILD_FORCE, lang.menuForceCompile.c_str());

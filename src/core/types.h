@@ -20,7 +20,7 @@
 #include <deque>
 #include <map>
 
-#define APP_NAME L"Qingxin Notepad"
+#define APP_NAME L"Qingxi Notepad"
 #define ZOOM_MIN 25
 #define ZOOM_MAX 500
 #define ZOOM_DEFAULT 100

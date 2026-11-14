@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(qingxinotepad VERSION 1.3.1 LANGUAGES CXX)
+project(qingxinotepad VERSION 1.4.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -44,6 +44,7 @@ add_executable(qingxinotepad WIN32
     src/modules/codeeditor.cpp
     src/modules/compiler.cpp
     src/modules/compilewindow.cpp
+    src/modules/consolewindow.cpp
     src/modules/tabs.cpp
     src/modules/netlib.cpp
     src/modules/libsource.cpp
@@ -91,7 +92,7 @@ install(FILES LICENSE README.md DESTINATION .)
 # Installer / packaging (CPack with NSIS)
 set(CPACK_GENERATOR "NSIS")
 set(CPACK_PACKAGE_NAME "qingxinotepad")
-set(CPACK_PACKAGE_VENDOR "Qingxin Notepad")
+set(CPACK_PACKAGE_VENDOR "Qingxi Notepad")
 set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
 if(CMAKE_GENERATOR_PLATFORM)
     set(CPACK_PACKAGE_FILE_NAME "qingxinotepad-${PROJECT_VERSION}-${CMAKE_GENERATOR_PLATFORM}")
@@ -99,8 +100,8 @@ else()
     set(CPACK_PACKAGE_FILE_NAME "qingxinotepad-${PROJECT_VERSION}")
 endif()
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENSE")
-set(CPACK_NSIS_DISPLAY_NAME "Qingxin Notepad")
-set(CPACK_NSIS_PACKAGE_NAME "Qingxin Notepad")
+set(CPACK_NSIS_DISPLAY_NAME "Qingxi Notepad")
+set(CPACK_NSIS_PACKAGE_NAME "Qingxi Notepad")
 # CPACK_NSIS_URL_INFO_ABOUT intentionally unset: no public project URL yet
 set(CPACK_NSIS_MODIFY_PATH ON)
 set(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL ON)

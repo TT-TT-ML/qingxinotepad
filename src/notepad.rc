@@ -98,6 +98,8 @@ BEGIN
             MENUITEM "&Change Icon...", IDM_VIEW_ICON_CHANGE
             MENUITEM "&Reset to Default", IDM_VIEW_ICON_RESET
         END
+        MENUITEM SEPARATOR
+        MENUITEM "&Command Line\tCtrl+`", IDM_VIEW_CONSOLE
     END
     POPUP "&Language"
     BEGIN
@@ -120,11 +122,12 @@ BEGIN
     POPUP "&Help"
     BEGIN
         MENUITEM "Check for &Updates...", IDM_HELP_CHECKUPDATES
-        MENUITEM "&About Qingxin Notepad", IDM_HELP_ABOUT
+        MENUITEM "&About Qingxi Notepad", IDM_HELP_ABOUT
     END
     POPUP "&Build"
     BEGIN
         MENUITEM "&Compile\tF7", IDM_BUILD_COMPILE
+        MENUITEM "Compile and &Run\tF8", IDM_BUILD_RUN
         MENUITEM "Ignore checks, force compile", IDM_BUILD_FORCE
         MENUITEM "Compile &Settings...", IDM_BUILD_SETTINGS
     END
@@ -152,4 +155,6 @@ BEGIN
     VK_OEM_MINUS, IDM_VIEW_ZOOMOUT, VIRTKEY, CONTROL
     "0", IDM_VIEW_ZOOMDEFAULT, VIRTKEY, CONTROL
     VK_F7, IDM_BUILD_COMPILE, VIRTKEY
+    VK_F8, IDM_BUILD_RUN, VIRTKEY
+    VK_OEM_3, IDM_VIEW_CONSOLE, VIRTKEY, CONTROL
 END

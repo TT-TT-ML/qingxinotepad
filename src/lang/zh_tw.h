@@ -1,7 +1,7 @@
 #pragma once
 #include "lang.h"
 inline LangStrings g_langZH_TW = {
-    L"Qingxin Notepad",
+    L"Qingxi Notepad",
     L"未命名",
     L"檔案(&F)",
     L"新增(&N)\tCtrl+N",
@@ -56,7 +56,7 @@ inline LangStrings g_langZH_TW = {
     L"視窗透明度(&T)...",
     L"永遠置頂(&A)",
     L"說明(&H)",
-    L"關於 Qingxin Notepad(&A)",
+    L"關於 Qingxi Notepad(&A)",
     L"檢查更新(&U)",
     L"語言(&L)",
     L"英語",
@@ -81,7 +81,7 @@ inline LangStrings g_langZH_TW = {
     L"無法開啟檔案。",
     L"無法儲存檔案。",
     L"錯誤",
-    L"Qingxin Notepad v1.3.1\n\n快速輕量的文字編輯器。\n\n使用 C++ Win32 API 建置。\n",
+    L"Qingxi Notepad v1.4.0\n\n快速輕量的文字編輯器。\n\n使用 C++ Win32 API 建置。\n",
     L" 行 ",
     L"，欄 ",
     L"UTF-8",
@@ -119,4 +119,6 @@ inline LangStrings g_langZH_TW = {
     L"印地語",
     L"義大利語",
     L"荷蘭語",
-    L"土耳其語"};
+    L"土耳其語",
+    L"命令列(&C)",
+    L"編譯並執行(&R)"};

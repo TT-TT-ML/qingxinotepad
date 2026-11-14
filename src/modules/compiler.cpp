@@ -1,4 +1,5 @@
 #include "compiler.h"
+#include "consolewindow.h"
 #include "codeeditor.h"
 #include "compilewindow.h"
 #include "syntax.h"
@@ -30,6 +31,9 @@ static std::vector<std::wstring> g_compIds;
 // File that the running compile is building — shown in the result window so
 // it is obvious which source was compiled.
 static std::wstring g_compileTarget;
+// “编译并运行”：本次编译成功后要送进命令行窗口执行的产物路径
+static std::wstring g_compileRunPath;
+static bool g_runAfterCompile = false;
 
 /* ------------------------------------------------------------------ */
 /*  Default command templates per language                             */
@@ -288,6 +292,7 @@ void BuildCompileLang(const std::wstring &id)
     std::wstring dir, name;
     SplitPath(g_state.filePath, dir, name);
     std::wstring out = dir + name + L".exe";
+    g_compileRunPath = out;
     cmd = ReplaceAll(cmd, L"{file}", g_state.filePath);
     cmd = ReplaceAll(cmd, L"{dir}", dir);
     cmd = ReplaceAll(cmd, L"{name}", name);
@@ -357,6 +362,19 @@ void BuildCompile()
     BuildCompileLang(id);
 }
 
+// 编译并运行：正常编译一次，成功后在命令行窗口里执行编译产物。
+void BuildCompileRun()
+{
+    // 已有编译在跑就不排队，避免两个产物抢同一个输出文件
+    if (InterlockedCompareExchange(&g_compileBusy, 0, 0) != 0)
+        return;
+    g_runAfterCompile = true;
+    BuildCompile();
+    // BuildCompileLang 的所有提前返回都会把 busy 清回 0，据此判断没真正开始
+    if (InterlockedCompareExchange(&g_compileBusy, 0, 0) == 0)
+        g_runAfterCompile = false;
+}
+
 // "Ignore checks, force compile": build the current file while suppressing
 // the debounced code-check popup for the duration of the build.
 void BuildCompileForce()
@@ -381,8 +399,19 @@ void CompileNotifyDone(HWND hwnd, WPARAM wParam)
             shown = L"编译目标：" + g_compileTarget + L"\r\n\r\n";
         shown += res->output;
         ShowCompileResult(hwnd, shown, ok);
+        const bool runIt = g_runAfterCompile && ok;
         delete res;
+
+        // 编译并运行：编译成功后把刚产出的可执行文件交给命令行窗口，
+        // 工作目录就是源文件所在目录（与控制台窗口的启动目录一致）。
+        if (runIt)
+        {
+            g_runAfterCompile = false;
+            if (!g_compileRunPath.empty())
+                ConsoleRunBuiltExe(g_compileRunPath);
+        }
     }
+    g_runAfterCompile = false;
     InterlockedExchange(&g_compileBusy, 0);
     HMENU hMenu = GetMenu(hwnd);
     if (hMenu)

@@ -3,7 +3,7 @@
 #include "lang.h"
 
 inline LangStrings g_langJA = {
-    L"Qingxin Notepad",
+    L"Qingxi Notepad",
     L"無題",
 
     L"ファイル(&F)",
@@ -63,7 +63,7 @@ inline LangStrings g_langJA = {
     L"常に最前面に表示(&T)",
 
     L"ヘルプ(&H)",
-    L"Qingxin Notepad について(&A)",
+    L"Qingxi Notepad について(&A)",
     L"更新を確認",
 
     L"言語(&L)",
@@ -91,7 +91,7 @@ inline LangStrings g_langJA = {
     L"ファイルを開けません。",
     L"ファイルを保存できません。",
     L"エラー",
-    L"Qingxin Notepad v1.3.1\n\n高速で軽量なテキストエディタ。\n\nC++ Win32 API で構築。\n", //\nModify by 0x2o.net",
+    L"Qingxi Notepad v1.4.0\n\n高速で軽量なテキストエディタ。\n\nC++ Win32 API で構築。\n", //\nModify by 0x2o.net",
 
     L" 行 ",
     L", 列 ",
@@ -132,4 +132,6 @@ inline LangStrings g_langJA = {
     L"ヒンディー語",
     L"イタリア語",
     L"オランダ語",
-    L"トルコ語"};
+    L"トルコ語",
+    L"コマンドライン(&C)",
+    L"ビルドして実行(&R)"};

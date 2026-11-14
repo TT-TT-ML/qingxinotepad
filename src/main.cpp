@@ -22,6 +22,7 @@
 #include "modules/settings.h"
 #include "modules/menu.h"
 #include "modules/compiler.h"
+#include "modules/consolewindow.h"
 #include "modules/tabs.h"
 #include "modules/menu_skin.h"
 #include "modules/libwindow.h"
@@ -492,11 +493,19 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         case IDM_VIEW_ICON_RESET:
             ViewResetIcon();
             break;
+        case IDM_VIEW_CONSOLE:
+            // 打开自绘命令行窗口，工作目录跟随当前显示的文件
+            ConsoleShow(g_hwndMain);
+            break;
         case IDM_HELP_ABOUT:
             HelpAbout();
             break;
         case IDM_BUILD_COMPILE:
             BuildCompile();
+            break;
+        case IDM_BUILD_RUN:
+            // 编译并运行：编译成功后自动把产物送进命令行窗口执行
+            BuildCompileRun();
             break;
         case IDM_BUILD_FORCE:
             BuildCompileForce();
@@ -662,12 +671,37 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR lpCmdLine, int nCmdSh
     g_hAccel = LoadAcceleratorsW(hInstance, MAKEINTRESOURCEW(IDR_ACCEL));
     ShowWindow(g_hwndMain, nCmdShow);
     UpdateWindow(g_hwndMain);
+    // 自绘命令行窗口（查看 → 命令行）：注册窗口类并读取保存的行列网格
+    ConsoleInstall(g_hwndMain);
     if (lpCmdLine && lpCmdLine[0])
     {
-        std::wstring path = lpCmdLine;
-        if (path.front() == L'"' && path.back() == L'"')
-            path = path.substr(1, path.size() - 2);
-        LoadFile(path);
+        // 支持 --console-rows N / --console-cols N 覆盖命令行窗口的默认网格，
+        // 其余位置参数按文件名处理（可能带引号）。
+        int argc = 0;
+        LPWSTR *argv = CommandLineToArgvW(GetCommandLineW(), &argc);
+        std::wstring path;
+        if (argv)
+        {
+            for (int i = 1; i < argc; ++i)
+            {
+                std::wstring a = argv[i];
+                if (a == L"--console-rows" && i + 1 < argc)
+                    ConsoleSetDefaultSize(_wtoi(argv[++i]), ConsoleDefaultCols());
+                else if (a == L"--console-cols" && i + 1 < argc)
+                    ConsoleSetDefaultSize(ConsoleDefaultRows(), _wtoi(argv[++i]));
+                else if (a == L"--console")
+                    ConsoleShow(g_hwndMain);
+                else if (!a.empty() && a[0] != L'-')
+                    path = a;
+            }
+            LocalFree(argv);
+        }
+        if (!path.empty())
+        {
+            if (path.front() == L'"' && path.back() == L'"' && path.size() > 1)
+                path = path.substr(1, path.size() - 2);
+            LoadFile(path);
+        }
     }
     MSG msg;
     while (GetMessageW(&msg, nullptr, 0, 0))

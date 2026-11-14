@@ -34,6 +34,7 @@ void LoadCompilerCommands();      // read saved per-language commands at startup
 void BuildCompile();              // compile (or run) the current file on a worker thread
 void BuildCompileLang(const std::wstring &id); // compile the current file as a specific language
 void BuildCompileForce();         // "ignore checks, force compile": build while suppressing the code-check popup
+void BuildCompileRun();           // 编译并运行：成功后把产物送进命令行窗口执行
 void BuildShowSettings();         // modal dialog to view/edit per-language commands
 
 // UI-thread handler for the compile-finished notification (WM_APP_COMPILE_DONE).

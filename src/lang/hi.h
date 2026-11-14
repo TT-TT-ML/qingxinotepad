@@ -3,7 +3,7 @@
 #include "lang.h"
 
 inline LangStrings g_langHI = {
-    L"Qingxin Notepad",
+    L"Qingxi Notepad",
     L"अनाम",
     L"&फ़ाइल",
     L"&नया\tCtrl+N",
@@ -58,7 +58,7 @@ inline LangStrings g_langHI = {
     L"विंडो &पारदर्शिता...",
     L"हमेशा &शीर्ष पर",
     L"&सहायता",
-    L"Qingxin Notepad के &बारे में",
+    L"Qingxi Notepad के &बारे में",
     L"&अपडेट जाँचें",
     L"&भाषा",
     L"&English",
@@ -83,7 +83,7 @@ inline LangStrings g_langHI = {
     L"फ़ाइल नहीं खुल सकी।",
     L"फ़ाइल सहेजी नहीं जा सकी।",
     L"त्रुटि",
-    L"Qingxin Notepad v1.3.1\n\nएक तेज़, हल्का टेक्स्ट एडिटर।\n\nC++ और Win32 API से बनाया गया।\n",
+    L"Qingxi Notepad v1.4.0\n\nएक तेज़, हल्का टेक्स्ट एडिटर।\n\nC++ और Win32 API से बनाया गया।\n",
     L" पंक्ति ",
     L", स्तंभ ",
     L"UTF-8",
@@ -121,4 +121,6 @@ inline LangStrings g_langHI = {
     L"&हिन्दी",
     L"&Italiano",
     L"&Nederlands",
-    L"&Türkçe"};
+    L"&Türkçe",
+    L"कमांड लाइन&",
+    L"कंपाइल और चलाएं&"};

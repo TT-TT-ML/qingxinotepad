@@ -4,7 +4,7 @@
 #   pwsh -File build_and_pack.ps1 -Version 1.2.1  # 出新版本
 #   pwsh -File build_and_pack.ps1 -SkipBuild      # 不重新编译，只重打包
 param(
-    [string]$Version = "1.3.1",
+    [string]$Version = "1.4.0",
     [switch]$SkipBuild
 )
 
@@ -80,7 +80,7 @@ $assocExts = ".cpp;.h;.c;.cc;.cxx;.hpp;.hxx;.hh;.ipp;.inc;.cu;.cuh;.cs;.java;" +
              ".vb;.vbs;.cmake;.pro;.pri;.qrc;.qss;.rc;.mk;.mak;.dockerfile;" +
              ".containerfile;.proto"
 # 简介用字面 \n（构建器 CLI 会把它转成换行），避免命令行里出现真换行
-$desc = 'Qingxin Notepad —— 轻量快速的文本与代码编辑器。\n支持 C++/Python/JavaScript 语法高亮、自动补全、库下载与一键编译。'
+$desc = 'Qingxi Notepad —— 轻量快速的文本与代码编辑器。\n支持 C++/Python/JavaScript 语法高亮、自动补全、库下载与一键编译。'
 $cliLog = Join-Path $logDir "builder_cli.log"
 Remove-Item -LiteralPath $cliLog -Force -ErrorAction SilentlyContinue
 # Builder 是 GUI 子系统程序：直接 & 调用会立刻返回，必须用 -Wait 等它写完。

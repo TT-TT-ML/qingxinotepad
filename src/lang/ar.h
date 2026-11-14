@@ -3,7 +3,7 @@
 #include "lang.h"
 
 inline LangStrings g_langAR = {
-    L"Qingxin Notepad",
+    L"Qingxi Notepad",
     L"غير مسمى",
     L"&ملف",
     L"&جديد\tCtrl+N",
@@ -58,7 +58,7 @@ inline LangStrings g_langAR = {
     L"شفافية ال&نافذة...",
     L"دائماً في &الأعلى",
     L"&مساعدة",
-    L"&حول Qingxin Notepad",
+    L"&حول Qingxi Notepad",
     L"&التحقق من التحديثات",
     L"&اللغة",
     L"&English",
@@ -83,7 +83,7 @@ inline LangStrings g_langAR = {
     L"لا يمكن فتح الملف.",
     L"لا يمكن حفظ الملف.",
     L"خطأ",
-    L"Qingxin Notepad v1.3.1\n\nمحرر نصوص سريع وخفيف.\n\nمبني بلغة C++ وواجهة Win32 API.\n",
+    L"Qingxi Notepad v1.4.0\n\nمحرر نصوص سريع وخفيف.\n\nمبني بلغة C++ وواجهة Win32 API.\n",
     L" سطر ",
     L"، عمود ",
     L"UTF-8",
@@ -121,4 +121,6 @@ inline LangStrings g_langAR = {
     L"&हिन्दी",
     L"&Italiano",
     L"&Nederlands",
-    L"&Türkçe"};
+    L"&Türkçe",
+    L"سطر الأوامر&",
+    L"ترجمة وتشغيل&"};

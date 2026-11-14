@@ -3,7 +3,7 @@
 #include "lang.h"
 
 inline LangStrings g_langEN = {
-    L"Qingxin Notepad",
+    L"Qingxi Notepad",
     L"Untitled",
 
     L"&File",
@@ -63,7 +63,7 @@ inline LangStrings g_langEN = {
     L"Always on &Top",
 
     L"&Help",
-    L"&About Qingxin Notepad",
+    L"&About Qingxi Notepad",
     L"&Check for Updates",
 
     L"&Language",
@@ -91,7 +91,7 @@ inline LangStrings g_langEN = {
     L"Cannot open file.",
     L"Cannot save file.",
     L"Error",
-    L"Qingxin Notepad v1.3.1\n\nA fast, lightweight text editor.\n\nBuilt with C++ and Win32 API.\n", //\nModify by 0x2o.net",
+    L"Qingxi Notepad v1.4.0\n\nA fast, lightweight text editor.\n\nBuilt with C++ and Win32 API.\n", //\nModify by 0x2o.net",
 
     L" Ln ",
     L", Col ",
@@ -132,4 +132,6 @@ inline LangStrings g_langEN = {
     L"Hindi",
     L"Italian",
     L"Dutch",
-    L"Turkish"};
+    L"Turkish",
+    L"&Command Line",
+    L"Compile and &Run"};

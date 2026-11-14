@@ -142,6 +142,8 @@ struct LangStrings
     std::wstring menuLangItalian;   // 语言菜单：意大利语
     std::wstring menuLangDutch;     // 语言菜单：荷兰语
     std::wstring menuLangTurkish;   // 语言菜单：土耳其语
+    std::wstring menuConsole;       // 查看菜单：命令行（追加在末尾，保持聚合初始化对齐）
+    std::wstring menuCompileRun;    // 编译菜单：编译并运行
 };
 void InitLanguage();
 void SetLanguage(LangID lang);
