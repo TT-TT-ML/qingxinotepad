@@ -192,7 +192,7 @@ static void ScanCFamily(const LanguageDef *L, const std::wstring &text,
 
     bool inBlock = false;
     size_t pos = 0, n = text.size();
-    int lineNo = 0;
+    int lineNo [[maybe_unused]] = 0;
     while (pos <= n)
     {
         size_t e = text.find(L'\n', pos);
@@ -291,7 +291,7 @@ static void ScanCFamily(const LanguageDef *L, const std::wstring &text,
             continue;
         }
 
-        bool stmtStart = true;
+        bool stmtStart [[maybe_unused]] = true;
         int parenDepth = 0;
         bool angleOpen = false;
 
@@ -1053,7 +1053,7 @@ static void ScanScript(const wchar_t *langId, const std::wstring &text,
                        std::vector<UserSym> &syms)
 {
     size_t pos = 0, n = text.size();
-    int lineNo = 0;
+    int lineNo [[maybe_unused]] = 0;
     while (pos <= n)
     {
         size_t e = text.find(L'\n', pos);

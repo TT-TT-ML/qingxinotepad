@@ -327,10 +327,10 @@ static size_t NextGrapheme(const std::wstring &s, size_t i, size_t len)
 
 static int CharCols(wchar_t c, wchar_t next)
 {
-    if (c >= 0x1100 && (c <= 0x115F || c >= 0x2E80 && c <= 0xA4CF ||
-                        c >= 0xAC00 && c <= 0xD7A3 || c >= 0xF900 && c <= 0xFAFF ||
-                        c >= 0xFE30 && c <= 0xFE4F || c >= 0xFF00 && c <= 0xFF60 ||
-                        c >= 0xFFE0 && c <= 0xFFE6))
+    if (c >= 0x1100 && (c <= 0x115F || (c >= 0x2E80 && c <= 0xA4CF) ||
+                        (c >= 0xAC00 && c <= 0xD7A3) || (c >= 0xF900 && c <= 0xFAFF) ||
+                        (c >= 0xFE30 && c <= 0xFE4F) || (c >= 0xFF00 && c <= 0xFF60) ||
+                        (c >= 0xFFE0 && c <= 0xFFE6)))
         return 2;
     if (IsSurHigh(c) && IsSurLow(next))
         return 2; // astral plane char (surrogate pair) = one 2-col char

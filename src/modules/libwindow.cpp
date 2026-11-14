@@ -58,7 +58,6 @@ const int kPad = 12;
 const int kRow1Y = 10;
 const int kRow1H = 30;
 const int kRow2Y = 46;
-const int kRow2H = 30;
 const int kListY = 84;
 const int kFootH = 46;
 const int kRowH = 48;
@@ -131,15 +130,6 @@ std::wstring BaseOf(LibLang lang)
     if (idx < 0 || static_cast<size_t>(idx) >= srcs.size())
         return std::wstring();
     return srcs[static_cast<size_t>(idx)].base;
-}
-
-std::wstring SourceName(LibLang lang)
-{
-    const std::vector<LibSource> &srcs = AllSources(lang);
-    int idx = LibSelectedSource(lang);
-    if (idx < 0 || static_cast<size_t>(idx) >= srcs.size())
-        return L"未选择源";
-    return srcs[static_cast<size_t>(idx)].name;
 }
 
 std::wstring FormatSize(unsigned long long bytes)

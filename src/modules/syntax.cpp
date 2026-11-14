@@ -268,9 +268,6 @@ static const wchar_t *kwXml[] = {
 static const wchar_t *tyXml[] = {nullptr};
 static const wchar_t *liXml[] = {nullptr};
 
-static const wchar_t *noTy[] = {nullptr};
-static const wchar_t *noLi[] = {nullptr};
-
 /* Markdown */
 static const wchar_t *kwMd[] = {nullptr};
 static const wchar_t *tyMd[] = {nullptr};
