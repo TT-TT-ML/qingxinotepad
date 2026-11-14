@@ -1054,36 +1054,79 @@ static bool CanAutoPairQuote(const EditorState *st, wchar_t q)
 
 // 结构体 / 类 / 枚举 / 联合体的花括号：右侧大括号后面要补一个分号，
 // 其余花括号（函数体、if/for 块、裸语句块）保持原样不加分号。
-static bool StructBraceContext(const EditorState *st)
+// 大括号另起一行（Allman 风格）时，把上一行甚至继承列表一并纳入判断。
+static void TrimRight(std::wstring &s)
 {
-    const int line = LineOfOffset(st, st->caret);
-    const size_t ls = LineStart(st, line);
-    std::wstring prefix = st->text.substr(ls, st->caret - ls);
-    while (!prefix.empty() && (prefix.back() == L' ' || prefix.back() == L'\t'))
-        prefix.pop_back();
-    if (prefix.empty())
-        return false;
-    if (prefix.back() == L')' || prefix.back() == L';') // 函数体 / 语句块
-        return false;
+    while (!s.empty() && (s.back() == L' ' || s.back() == L'\t' || s.back() == L'\r'))
+        s.pop_back();
+}
+
+static bool HasTypeKeyword(const std::wstring &text)
+{
     static const wchar_t *const kTypes[] = { L"struct", L"class", L"enum", L"union", nullptr };
     size_t i = 0;
-    while (i < prefix.size())
+    while (i < text.size())
     {
-        if (!IsIdentifierChar(prefix[i]))
+        if (!IsIdentifierChar(text[i]))
         {
             ++i;
             continue;
         }
         size_t j = i;
-        while (j < prefix.size() && IsIdentifierChar(prefix[j]))
+        while (j < text.size() && IsIdentifierChar(text[j]))
             ++j;
-        const std::wstring w = prefix.substr(i, j - i);
+        const std::wstring w = text.substr(i, j - i);
         for (int k = 0; kTypes[k] != nullptr; ++k)
         {
             if (w == kTypes[k])
                 return true;
         }
         i = j;
+    }
+    return false;
+}
+
+static bool StructBraceContext(const EditorState *st)
+{
+    const int line = LineOfOffset(st, st->caret);
+    std::vector<std::wstring> segs;
+    std::wstring cur = st->text.substr(LineStart(st, line), LineCol(st, st->caret));
+    TrimRight(cur);
+    segs.push_back(cur);
+
+    // 当前行只有缩进（"{" 独占一行）时向上收集：继承列表以 , / : 结尾、
+    // 遇到 ) 或 ; 结尾的行说明是函数体或语句块，就此打住。
+    for (int up = 1; segs[0].empty() && up <= 4 && line - up >= 0; ++up)
+    {
+        std::wstring t = LineContent(st, line - up);
+        TrimRight(t);
+        if (t.empty())
+            continue;
+        const wchar_t tail = t.back();
+        segs.push_back(t);
+        if (tail != L',' && tail != L':')
+            break;
+    }
+
+    // 最近的非空行以 ) 或 ; 结尾 → 函数体 / 语句块，不加分号
+    const std::wstring *nearest = nullptr;
+    for (size_t s = 0; s < segs.size(); ++s)
+    {
+        if (!segs[s].empty())
+        {
+            nearest = &segs[s];
+            break;
+        }
+    }
+    if (nearest == nullptr)
+        return false;
+    if (nearest->back() == L')' || nearest->back() == L';')
+        return false;
+
+    for (size_t s = 0; s < segs.size(); ++s)
+    {
+        if (HasTypeKeyword(segs[s]))
+            return true;
     }
     return false;
 }
@@ -1102,20 +1145,78 @@ static void InsertStructBrace(HWND hwnd, EditorState *st)
     InvalidateRect(hwnd, nullptr, FALSE);
 }
 
+// 找出包围当前光标位置的那个 "{" 所在的行号（用于判断「是不是在类体 /
+// switch 里」，并据此算标签的缩进）。找不到未配对的开括号时返回 -1。
+static int EnclosingBlockLine(const EditorState *st)
+{
+    int depth = 0;
+    size_t p = st->caret;
+    while (p > 0)
+    {
+        --p;
+        const wchar_t c = st->text[p];
+        if (c == L'}')
+        {
+            ++depth;
+            continue;
+        }
+        if (c != L'{')
+            continue;
+        if (depth > 0)
+        {
+            --depth;
+            continue;
+        }
+        return LineOfOffset(st, p);
+    }
+    return -1;
+}
+
+// 该 "{" 所在的上下文行：形如 "class Foo" 时继续向上把继承列表一起纳入。
+static std::wstring EnclosingBlockHead(const EditorState *st, int braceLine)
+{
+    if (braceLine < 0)
+        return std::wstring();
+    std::wstring t = LineContent(st, braceLine);
+    TrimRight(t);
+    int line = braceLine;
+    while (!t.empty() && (t.back() == L':' || t.back() == L',') && line > 0)
+    {
+        --line;
+        std::wstring up = LineContent(st, line);
+        TrimRight(up);
+        if (up.empty())
+            break;
+        t = up + L" " + t;
+    }
+    return t;
+}
+
 /*  语法的强制补全：在代码语言里打完关键字再敲空格，直接带出结构骨架。
-    if / for / while / switch / catch  →  kw () {\n     \n}
-    else / do / try                    →  kw {\n     \n}
-    光标落在圆括号或花括号内部的第一行缩进处。                          */
+    if / for / while / switch / catch      →  kw () {\n     \n}
+    do / try / namespace                   →  kw {\n     \n}
+    public / private / protected / default →  kw: 换行并保持缩进
+    （访问说明符只在类体里展开，default 只在 switch 里展开）          */
+enum SynKind
+{
+    SYN_PARENS, // kw () { … }
+    SYN_BLOCK,  // kw { … }
+    SYN_LABEL   // kw: 换行缩进
+};
+
 struct SynBlock
 {
     const wchar_t *kw;
-    bool parens; // true: 带圆括号；false: 只有花括号
+    SynKind kind;
 };
 
 static const SynBlock kSynBlocks[] = {
-    { L"if", true },     { L"for", true },   { L"while", true }, { L"switch", true },
-    { L"catch", true },  { L"else", false }, { L"do", false },   { L"try", false },
-    { nullptr, false }
+    { L"if", SYN_PARENS },      { L"for", SYN_PARENS },     { L"while", SYN_PARENS },
+    { L"switch", SYN_PARENS },  { L"catch", SYN_PARENS },
+    { L"do", SYN_BLOCK },       { L"try", SYN_BLOCK },      { L"namespace", SYN_BLOCK },
+    { L"public", SYN_LABEL },   { L"private", SYN_LABEL },  { L"protected", SYN_LABEL },
+    { L"default", SYN_LABEL },
+    { nullptr, SYN_PARENS }
 };
 
 static bool ExpandSyntaxBlock(HWND hwnd, EditorState *st)
@@ -1141,6 +1242,47 @@ static bool ExpandSyntaxBlock(HWND hwnd, EditorState *st)
     if (!hit)
         return false;
 
+    int braceLine = -1;
+    if (hit->kind == SYN_LABEL)
+    {
+        braceLine = EnclosingBlockLine(st);
+        const std::wstring ctx = EnclosingBlockHead(st, braceLine);
+        if (ctx.empty())
+            return false;
+        if (word == L"default")
+        {
+            // default: 只属于 switch
+            if (ctx.find(L"switch") == std::wstring::npos)
+                return false;
+        }
+        else if (!HasTypeKeyword(ctx))
+        {
+            // public / private / protected 只属于类体
+            return false;
+        }
+
+        // 标签整行重排：把「本行缩进 + 关键字」换成「类/switch 缩进 + 一级 +
+        // 关键字:」，下一行缩进再深一级。这样 public: 与 default: 总是落在
+        // 该在位置，不依赖当时光标前的缩进是否规整。
+        const std::wstring bline = LineContent(st, braceLine);
+        size_t q = 0;
+        while (q < bline.size() && (bline[q] == L' ' || bline[q] == L'\t'))
+            ++q;
+        const std::wstring labelIndent = bline.substr(0, q) + L"    ";
+        const std::wstring bodyIndent = labelIndent + L"    ";
+        const size_t ls = LineStart(st, LineOfOffset(st, st->caret));
+        const size_t at = st->caret;
+        const std::wstring repl = labelIndent + word + L":\n" + bodyIndent;
+        DoInsert(hwnd, st, ls, at, repl);
+        st->caret = ls + repl.size();
+        st->anchor = st->caret;
+        st->hasSel = false;
+        EnsureCaretVisible(hwnd, st);
+        NotifySelChange(hwnd);
+        InvalidateRect(hwnd, nullptr, FALSE);
+        return true;
+    }
+
     // 行首缩进
     const int line = LineOfOffset(st, st->caret);
     const std::wstring head = LineContent(st, line);
@@ -1152,7 +1294,7 @@ static bool ExpandSyntaxBlock(HWND hwnd, EditorState *st)
 
     std::wstring ins;
     size_t caretOff = 0;
-    if (hit->parens)
+    if (hit->kind == SYN_PARENS)
     {
         ins = L" () {\n" + inner + L"\n" + indent + L"}";
         caretOff = 2; // 落在 ( 和 ) 之间
@@ -1190,6 +1332,9 @@ static bool AnglePairContext(const EditorState *st)
     const std::wstring prefix =
         st->text.substr(LineStart(st, line), LineCol(st, st->caret));
     if (prefix.find(L'#') != std::wstring::npos)
+        return true;
+    // "template<" 也是模板语法，< 在这里同样成对出现
+    if (prefix.find(L"template") != std::wstring::npos)
         return true;
 
     static const wchar_t *const kStlNames[] = {
