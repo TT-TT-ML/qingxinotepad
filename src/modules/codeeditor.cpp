@@ -870,8 +870,11 @@ static void RefreshSemantic(HWND hwnd, EditorState *st)
     {
         std::vector<Diag> diags;
         ScanSemantic(st->text, L->id, st->userSyms, diags, st->filePath);
+        // 代码检查被关掉时：符号表照收（补全要用），但不再记问题行 / 提示。
         for (const Diag &d : diags)
         {
+            if (!g_state.codeCheck)
+                break;
             st->diagLines.push_back(d.line);
             std::wstring msg;
             if (d.kind == DiagKind::MissingInclude)
@@ -2123,6 +2126,28 @@ void CE_Refresh(HWND hwnd)
     InvalidateRect(hwnd, nullptr, TRUE);
 }
 
+// 「编译 → 代码检查」开关切换后同步编辑器：关掉时立刻抹掉红线和待弹的提示，
+// 重新打开时重扫一遍把问题标回来。
+void CE_SetCodeCheck(HWND hwnd)
+{
+    EditorState *st = GetState(hwnd);
+    if (!st)
+        return;
+    if (!g_state.codeCheck)
+    {
+        st->diagLines.clear();
+        st->diagMsgs.clear();
+        st->diagPopupArmed = false;
+        st->lastPoppedDiags.clear();
+        KillTimer(hwnd, 2);
+    }
+    else
+    {
+        RefreshSemantic(hwnd, st);
+    }
+    InvalidateRect(hwnd, nullptr, TRUE);
+}
+
 void CE_SetLanguage(HWND hwnd, const LanguageDef *lang)
 {
     EditorState *st = GetState(hwnd);
@@ -2554,7 +2579,7 @@ LRESULT CALLBACK CodeEditorWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
         if (wParam == 2 && st)
         {
             KillTimer(hwnd, 2);
-            if (st->diagPopupArmed && !st->diagMsgs.empty())
+            if (st->diagPopupArmed && !st->diagMsgs.empty() && g_state.codeCheck)
             {
                 st->diagPopupArmed = false;
                 st->lastPoppedDiags = st->diagMsgs;

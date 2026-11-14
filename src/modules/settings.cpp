@@ -12,6 +12,7 @@
 #define FONT_UNDERLINE_VALUE L"FontUnderline"
 #define ALWAYS_ON_TOP_VALUE L"AlwaysOnTop"
 #define WORD_WRAP_VALUE L"WordWrap"
+#define CODE_CHECK_VALUE L"CodeCheck"
 #define WINDOW_X_VALUE L"WindowX"
 #define WINDOW_Y_VALUE L"WindowY"
 #define WINDOW_WIDTH_VALUE L"WindowWidth"
@@ -63,6 +64,12 @@ void LoadFontSettings()
     {
         g_state.wordWrap = (flag != 0);
     }
+
+    // 代码检查开关（编译 → 代码检查），记住上次的选择
+    if (StorageGetDword(SETTINGS_KEY, CODE_CHECK_VALUE, &flag))
+    {
+        g_state.codeCheck = (flag != 0);
+    }
 }
 
 void SaveFontSettings()
@@ -74,6 +81,7 @@ void SaveFontSettings()
     StorageSetDword(SETTINGS_KEY, FONT_UNDERLINE_VALUE, g_state.fontUnderline ? 1u : 0u);
     StorageSetDword(SETTINGS_KEY, ALWAYS_ON_TOP_VALUE, g_state.alwaysOnTop ? 1u : 0u);
     StorageSetDword(SETTINGS_KEY, WORD_WRAP_VALUE, g_state.wordWrap ? 1u : 0u);
+    StorageSetDword(SETTINGS_KEY, CODE_CHECK_VALUE, g_state.codeCheck ? 1u : 0u);
 }
 
 void LoadWindowSettings()

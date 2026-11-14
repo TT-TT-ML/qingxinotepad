@@ -127,4 +127,5 @@ inline LangStrings g_langIT = {
     L"Finestra &console\tCtrl+`",
     L"&Cancella output",
     L"&Chiudi console",
-    L"&Impostazioni..."};
+    L"&Impostazioni...",
+    L"&Controllo del codice"};

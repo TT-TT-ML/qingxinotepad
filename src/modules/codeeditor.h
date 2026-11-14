@@ -47,6 +47,9 @@ void CE_InsertAtCaret(HWND hwnd, const std::wstring &s);
 void CE_SetFont(HWND hwnd, HFONT font);
 void CE_SetWordWrap(HWND hwnd, bool wrap);
 void CE_Refresh(HWND hwnd);
+// Code-check toggle: drop the red diagnostic lines / pending popup when it is
+// switched off, rescan the document when it is switched back on.
+void CE_SetCodeCheck(HWND hwnd);
 void CE_SetLanguage(HWND hwnd, const struct LanguageDef *lang);
 // Remember the current file's path so semantic scanning can resolve and
 // follow the document's local #include "..." headers.

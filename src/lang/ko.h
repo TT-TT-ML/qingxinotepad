@@ -125,4 +125,5 @@ inline LangStrings g_langKO = {
     L"콘솔 창(&C)\tCtrl+`",
     L"출력 지우기(&L)",
     L"콘솔 닫기(&X)",
-    L"설정(&S)..."};
+    L"설정(&S)...",
+    L"코드 검사(&C)"};

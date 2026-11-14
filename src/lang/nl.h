@@ -127,4 +127,5 @@ inline LangStrings g_langNL = {
     L"&Consolevenster\tCtrl+`",
     L"Uitvoer &wissen",
     L"Console &sluiten",
-    L"&Instellingen..."};
+    L"&Instellingen...",
+    L"Code-&controle"};

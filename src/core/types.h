@@ -114,6 +114,7 @@ struct AppState
     bool findMatchCase = false; // 查找/替换：区分大小写
     bool findForward = true;    // 查找方向：true=向下，false=向上
     bool wordWrap = true;   // 自动换行：一行显示不下就折到下一行（不插入换行符）
+    bool codeCheck = true;  // 代码检查：未知函数 / 缺 #include 标红并弹提示（「编译」菜单可开关）
     int zoomLevel = ZOOM_DEFAULT;
     bool showStatusBar = true;
     Theme theme = Theme::System;

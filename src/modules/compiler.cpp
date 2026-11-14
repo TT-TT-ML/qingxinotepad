@@ -386,6 +386,21 @@ void BuildCompileForce()
     // or when a compile fails to start (every early return in BuildCompileLang).
 }
 
+// 「编译」菜单里的代码检查开关：拨一下全局关 / 开，并记住选择。
+void BuildToggleCodeCheck()
+{
+    g_state.codeCheck = !g_state.codeCheck;
+    StorageSetDword(COMP_KEY, L"CodeCheck", g_state.codeCheck ? 1u : 0u);
+    HMENU hMenu = GetMenu(g_hwndMain);
+    if (hMenu)
+    {
+        CheckMenuItem(hMenu, IDM_BUILD_CODECHECK,
+                      MF_BYCOMMAND | (g_state.codeCheck ? MF_CHECKED : MF_UNCHECKED));
+        DrawMenuBar(g_hwndMain);
+    }
+    CE_SetCodeCheck(g_hwndEditor);
+}
+
 // Called from the main window's WndProc on WM_APP_COMPILE_DONE.
 void CompileNotifyDone(HWND hwnd, WPARAM wParam)
 {

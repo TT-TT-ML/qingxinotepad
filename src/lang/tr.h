@@ -127,4 +127,5 @@ inline LangStrings g_langTR = {
     L"&Konsol penceresi\tCtrl+`",
     L"Çıktıyı &temizle",
     L"&Konsolu kapat",
-    L"&Ayarlar..."};
+    L"&Ayarlar...",
+    L"&Kod denetimi"};

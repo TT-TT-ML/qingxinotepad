@@ -125,4 +125,5 @@ inline LangStrings g_langZH = {
     L"命令行窗口(&C)\tCtrl+`",
     L"清空输出(&L)",
     L"关闭命令行窗口(&X)",
-    L"设置(&S)..."};
+    L"设置(&S)...",
+    L"代码检查(&C)"};

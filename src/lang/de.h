@@ -125,4 +125,5 @@ inline LangStrings g_langDE = {
     L"&Konsolenfenster\tCtrl+`",
     L"&Ausgabe löschen",
     L"Konsole &schließen",
-    L"&Einstellungen..."};
+    L"&Einstellungen...",
+    L"Code-&Prüfung"};

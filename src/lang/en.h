@@ -138,4 +138,5 @@ inline LangStrings g_langEN = {
     L"&Console Window\tCtrl+`",
     L"&Clear Output",
     L"&Close Console",
-    L"&Settings..."};
+    L"&Settings...",
+    L"Code Che&cking"};

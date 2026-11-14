@@ -125,4 +125,5 @@ inline LangStrings g_langFR = {
     L"Fenêtre de &console\tCtrl+`",
     L"&Effacer la sortie",
     L"&Fermer la console",
-    L"&Paramètres..."};
+    L"&Paramètres...",
+    L"&Vérification du code"};

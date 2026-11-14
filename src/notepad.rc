@@ -127,6 +127,7 @@ BEGIN
         MENUITEM "&Compile\tF7", IDM_BUILD_COMPILE
         MENUITEM "Compile and &Run\tF8", IDM_BUILD_RUN
         MENUITEM "Ignore checks, force compile", IDM_BUILD_FORCE
+        MENUITEM "Code Che&cking", IDM_BUILD_CODECHECK, CHECKED
         MENUITEM "Compile &Settings...", IDM_BUILD_SETTINGS
     END
     POPUP "&Console"

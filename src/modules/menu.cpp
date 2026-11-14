@@ -239,6 +239,11 @@ void RebuildBuildMenu()
     // 2b) Ignore checks, force compile.
     AppendMenuW(hBuild, MF_STRING, IDM_BUILD_FORCE, lang.menuForceCompile.c_str());
 
+    // 2c) Code checking on/off (checked = the editor flags unknown functions
+    // and missing #include).
+    AppendMenuW(hBuild, MF_STRING | (g_state.codeCheck ? MF_CHECKED : MF_UNCHECKED),
+                IDM_BUILD_CODECHECK, lang.menuCodeCheck.c_str());
+
     AppendMenuW(hBuild, MF_SEPARATOR, 0, nullptr);
 
     // 3) Compile settings...
