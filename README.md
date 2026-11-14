@@ -1,4 +1,4 @@
-# 晴溪notepad · Qingxin Notepad 1.4.2
+# 晴溪notepad · Qingxi Notepad 1.4.2
 
 轻量、原生的 Windows 文本 / 代码编辑器，用 C++17 + Win32 API 手写，**界面全部自绘**，不依赖 RichEdit / Qt / .NET，单文件 exe 无第三方运行时。
 
@@ -16,7 +16,7 @@ A lightweight native Windows text & code editor written in C++17 with the Win32 
 | 源码 | 本仓库（`main` 分支） |
 
 - **安装版**：单个 `qingxinotepad_install.exe`，安装时可选要注册的文件关联扩展名。
-- **绿色版**：qingxinotepad-portable-1.4.0-r2.zip 解压后直接运行 `qingxinotepad.exe`，配置写在 exe 同目录的 `qingxinotepad.ini`，不往系统里写任何东西。
+- **绿色版**：`qingxinotepad-portable-1.4.2.zip` 解压后直接运行 `qingxinotepad.exe`，配置写在 exe 同目录的 `qingxinotepad.ini`，不往系统里写任何东西。
 
 ## 功能
 
