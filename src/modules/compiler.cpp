@@ -7,6 +7,7 @@
 #include "core/storage.h"
 #include "core/types.h"
 #include "commands.h"
+#include "menu.h"
 #include "resource.h"
 #include <windows.h>
 #include <string>
@@ -389,6 +390,13 @@ void BuildCompileForce()
 // 「编译」菜单里的代码检查开关：拨一下全局关 / 开，并记住选择。
 void BuildToggleCodeCheck()
 {
+    // 已经「禁止代码检查」时这个开关失效，不能绕过禁止
+    if (g_state.noCodeCheck)
+    {
+        MessageBoxW(g_hwndMain, L"已勾选「禁止代码检查」，请先取消它再打开代码检查。",
+                    L"代码检查", MB_OK | MB_ICONINFORMATION);
+        return;
+    }
     g_state.codeCheck = !g_state.codeCheck;
     StorageSetDword(COMP_KEY, L"CodeCheck", g_state.codeCheck ? 1u : 0u);
     HMENU hMenu = GetMenu(g_hwndMain);
@@ -398,6 +406,21 @@ void BuildToggleCodeCheck()
                       MF_BYCOMMAND | (g_state.codeCheck ? MF_CHECKED : MF_UNCHECKED));
         DrawMenuBar(g_hwndMain);
     }
+    CE_SetCodeCheck(g_hwndEditor);
+}
+
+// 「编译」菜单里的「禁止代码检查」：勾上就强制关闭检查，并让上面的开关置灰；
+// 取消勾选后检查开关恢复可用（是否真的开启仍由那个开关决定）。
+void BuildToggleNoCodeCheck()
+{
+    g_state.noCodeCheck = !g_state.noCodeCheck;
+    if (g_state.noCodeCheck)
+    {
+        g_state.codeCheck = false;
+        CE_SuppressPendingCheck(g_hwndEditor);
+    }
+    StorageSetDword(COMP_KEY, L"NoCodeCheck", g_state.noCodeCheck ? 1u : 0u);
+    RebuildBuildMenu();
     CE_SetCodeCheck(g_hwndEditor);
 }
 

@@ -1,10 +1,11 @@
 # 一键：编译 Release → 生成单文件安装包 → 更新绿色版 zip
+# 只构建本机架构（MSVC x64）的 Windows 安装包；多架构/交叉编译请用 build_matrix.ps1 -Only
 # 用法：
-#   pwsh -File build_and_pack.ps1                 # 默认 1.3.1
+#   pwsh -File build_and_pack.ps1                 # 默认 1.4.7
 #   pwsh -File build_and_pack.ps1 -Version 1.2.1  # 出新版本
 #   pwsh -File build_and_pack.ps1 -SkipBuild      # 不重新编译，只重打包
 param(
-    [string]$Version = "1.4.6",
+    [string]$Version = "1.4.7",
     [switch]$SkipBuild
 )
 

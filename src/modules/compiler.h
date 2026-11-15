@@ -35,6 +35,7 @@ void BuildCompile();              // compile (or run) the current file on a work
 void BuildCompileLang(const std::wstring &id); // compile the current file as a specific language
 void BuildCompileForce();         // "ignore checks, force compile": build while suppressing the code-check popup
 void BuildToggleCodeCheck();      // 代码检查开关：未知函数 / 缺 #include 的红线与提示
+void BuildToggleNoCodeCheck();    // 禁止代码检查：强制关闭检查，并让上面的开关置灰
 void BuildCompileRun();           // 编译并运行：成功后把产物送进命令行窗口执行
 void BuildShowSettings();         // modal dialog to view/edit per-language commands
 

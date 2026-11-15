@@ -1,4 +1,4 @@
-# 晴溪notepad · Qingxi Notepad 1.4.6
+# 晴溪notepad · Qingxi Notepad 1.4.7
 
 轻量、原生的 Windows 文本 / 代码编辑器，用 C++17 + Win32 API 手写，**界面全部自绘**，不依赖 RichEdit / Qt / .NET，单文件 exe 无第三方运行时。
 
@@ -10,13 +10,13 @@ A lightweight native Windows text & code editor written in C++17 with the Win32 
 
 | 渠道 | 地址 |
 | --- | --- |
-| 官方下载中心 | <https://ttqx.cc.cd/d/> → 「晴溪notepad文本编辑器 / 1.4.6」 |
-| 安装版直链 | <https://ttqx.cc.cd/d/get/%E6%99%B4%E6%BA%AAnotepad%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8/1.4.6/qingxinotepad_install.exe> |
-| 绿色版直链 | <https://ttqx.cc.cd/d/get/%E6%99%B4%E6%BA%AAnotepad%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8/1.4.6/qingxinotepad-portable-1.4.6.zip> |
+| 官方下载中心 | <https://ttqx.cc.cd/d/> → 「晴溪notepad文本编辑器 / 1.4.7」 |
+| 安装版直链 | <https://ttqx.cc.cd/d/get/%E6%99%B4%E6%BA%AAnotepad%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8/1.4.7/qingxinotepad_install.exe> |
+| 绿色版直链 | <https://ttqx.cc.cd/d/get/%E6%99%B4%E6%BA%AAnotepad%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8/1.4.7/qingxinotepad-portable-1.4.7.zip> |
 | 源码 | 本仓库（`main` 分支） |
 
 - **安装版**：单个 `qingxinotepad_install.exe`，安装时可选要注册的文件关联扩展名。
-- **绿色版**：`qingxinotepad-portable-1.4.6.zip` 解压后直接运行 `qingxinotepad.exe`，配置写在 exe 同目录的 `qingxinotepad.ini`，不往系统里写任何东西。
+- **绿色版**：`qingxinotepad-portable-1.4.7.zip` 解压后直接运行 `qingxinotepad.exe`，配置写在 exe 同目录的 `qingxinotepad.ini`，不往系统里写任何东西。
 
 ## 功能
 
@@ -197,6 +197,11 @@ build_and_pack.ps1
 ```
 
 ## 版本历史
+
+### 1.4.7
+- 「编译」菜单新增 **「禁止代码检查」**：勾选后强制关闭代码检查（未知函数 / 缺 `#include` 的标红与弹窗），上方的「代码检查」开关同时置灰、无法绕过；取消勾选即恢复可用。选择记在注册表 `Software\LegacyNotepad` 的 `NoCodeCheck`，下次启动保持。
+- 关于框版本号统一显示 1.4.7（15 种语言）。
+- **构建策略调整**：从本版起默认只构建本机架构（MSVC x64）的 Windows 安装包，`build_matrix.ps1` 默认 `-Only msvc-x64`；多架构/交叉编译改为显式 `-Only msvc-x86,mingw-x64,arm64` 时才执行。
 
 ### 1.4.6
 - **Linux 三架构包**：`qingxinotepad-linux-x86_64-1.4.6.tar.gz`、`-arm64`、`-i686`，均由 `packaging\linux\pack_linux.ps1` 在 Windows 上构建；每个包内含对应架构的 Windows 主程序与 POSIX shell 启动器。

@@ -13,6 +13,7 @@
 #define ALWAYS_ON_TOP_VALUE L"AlwaysOnTop"
 #define WORD_WRAP_VALUE L"WordWrap"
 #define CODE_CHECK_VALUE L"CodeCheck"
+#define NO_CODE_CHECK_VALUE L"NoCodeCheck"
 #define WINDOW_X_VALUE L"WindowX"
 #define WINDOW_Y_VALUE L"WindowY"
 #define WINDOW_WIDTH_VALUE L"WindowWidth"
@@ -70,6 +71,16 @@ void LoadFontSettings()
     {
         g_state.codeCheck = (flag != 0);
     }
+
+    // 禁止代码检查（编译 → 禁止代码检查）：一旦勾选，无论上面的开关如何都强制关闭检查
+    if (StorageGetDword(SETTINGS_KEY, NO_CODE_CHECK_VALUE, &flag))
+    {
+        g_state.noCodeCheck = (flag != 0);
+    }
+    if (g_state.noCodeCheck)
+    {
+        g_state.codeCheck = false;
+    }
 }
 
 void SaveFontSettings()
@@ -82,6 +93,7 @@ void SaveFontSettings()
     StorageSetDword(SETTINGS_KEY, ALWAYS_ON_TOP_VALUE, g_state.alwaysOnTop ? 1u : 0u);
     StorageSetDword(SETTINGS_KEY, WORD_WRAP_VALUE, g_state.wordWrap ? 1u : 0u);
     StorageSetDword(SETTINGS_KEY, CODE_CHECK_VALUE, g_state.codeCheck ? 1u : 0u);
+    StorageSetDword(SETTINGS_KEY, NO_CODE_CHECK_VALUE, g_state.noCodeCheck ? 1u : 0u);
 }
 
 void LoadWindowSettings()

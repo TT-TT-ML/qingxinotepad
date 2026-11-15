@@ -149,6 +149,7 @@ struct LangStrings
     std::wstring menuConsoleClose;  // 控制台菜单：关闭命令行窗口
     std::wstring menuConsoleSettings; // 控制台菜单：设置…
     std::wstring menuCodeCheck;      // 编译菜单：代码检查开关
+    std::wstring menuNoCodeCheck;    // 编译菜单：禁止代码检查（强制关闭，开关置灰）
 };
 void InitLanguage();
 void SetLanguage(LangID lang);

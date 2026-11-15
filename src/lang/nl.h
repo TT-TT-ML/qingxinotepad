@@ -83,7 +83,7 @@ inline LangStrings g_langNL = {
     L"Kan bestand niet openen.",
     L"Kan bestand niet opslaan.",
     L"Fout",
-    L"Qingxi Notepad v1.4.0\n\nEen snelle, lichte teksteditor.\n\nGemaakt met C++ en de Win32 API.\n",
+    L"Qingxi Notepad v1.4.7\n\nEen snelle, lichte teksteditor.\n\nGemaakt met C++ en de Win32 API.\n",
     L" Rgl ",
     L", Kol ",
     L"UTF-8",
@@ -128,4 +128,4 @@ inline LangStrings g_langNL = {
     L"Uitvoer &wissen",
     L"Console &sluiten",
     L"&Instellingen...",
-    L"Code-&controle"};
+    L"Code-&controle", L"Code-controle &verbieden"};

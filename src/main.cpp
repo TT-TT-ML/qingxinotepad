@@ -522,6 +522,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         case IDM_BUILD_CODECHECK:
             BuildToggleCodeCheck();
             break;
+        case IDM_BUILD_NOCODECHECK:
+            BuildToggleNoCodeCheck();
+            break;
         case IDM_BUILD_SETTINGS:
             BuildShowSettings();
             break;

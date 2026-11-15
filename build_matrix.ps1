@@ -1,16 +1,19 @@
 # 跨平台构建矩阵（Windows 多编译器 / 多架构）
+#   默认只构建本机架构 msvc-x64（用于安装包），其余目标改为按需开启。
 #   msvc-x64   ：官方构建，静态 CRT，Win7+，用于安装包与官方绿色包
 #   msvc-x86   ：32 位，Win7+ 老机器
 #   mingw-x64  ：MinGW-w64 GCC 静态构建，不依赖 VC++ 运行库（系统自带 UCRT）
 #   arm64      ：llvm-mingw(clang 22) 交叉编译，Windows on ARM
-# 用法：pwsh -File build_matrix.ps1 -Version 1.4.5 [-Only msvc-x64]
+# 用法：
+#   pwsh -File build_matrix.ps1                      # 只出本机架构 x64
+#   pwsh -File build_matrix.ps1 -Only msvc-x86,mingw-x64,arm64   # 需要时才开多架构
 param(
-    [string]$Version = "1.4.6",
+    [string]$Version = "1.4.7",
     [string]$CMake    = "D:\CMake\bin\cmake.exe",
     [string]$MinGWBin = "F:\MinGW\bin",
     [string]$LLVMMinGW = "F:\Qt\Tools\llvm-mingw2217_64\bin",
     [string]$Ninja    = "F:\Qt\Tools\Ninja\ninja.exe",
-    [string[]]$Only   = @()
+    [string[]]$Only   = @("msvc-x64")
 )
 
 $ErrorActionPreference = "Stop"

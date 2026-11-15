@@ -81,7 +81,7 @@ inline LangStrings g_langES = {
     L"No se puede abrir el archivo.",
     L"No se puede guardar el archivo.",
     L"Error",
-    L"Qingxi Notepad v1.4.0\n\nUn editor de texto rápido y ligero.\n\nCreado con C++ y Win32 API.\n",
+    L"Qingxi Notepad v1.4.7\n\nUn editor de texto rápido y ligero.\n\nCreado con C++ y Win32 API.\n",
     L" Ln ",
     L", Col ",
     L"UTF-8",
@@ -126,4 +126,4 @@ inline LangStrings g_langES = {
     L"&Borrar salida",
     L"&Cerrar consola",
     L"&Configuración...",
-    L"&Comprobación de código"};
+    L"&Comprobación de código", L"&Prohibir comprobación de código"};

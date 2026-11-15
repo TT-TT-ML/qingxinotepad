@@ -81,7 +81,7 @@ inline LangStrings g_langZH_TW = {
     L"無法開啟檔案。",
     L"無法儲存檔案。",
     L"錯誤",
-    L"Qingxi Notepad v1.4.0\n\n快速輕量的文字編輯器。\n\n使用 C++ Win32 API 建置。\n",
+    L"Qingxi Notepad v1.4.7\n\n快速輕量的文字編輯器。\n\n使用 C++ Win32 API 建置。\n",
     L" 行 ",
     L"，欄 ",
     L"UTF-8",
@@ -126,4 +126,4 @@ inline LangStrings g_langZH_TW = {
     L"清除輸出(&L)",
     L"關閉命令列視窗(&X)",
     L"設定(&S)...",
-    L"程式碼檢查(&C)"};
+    L"程式碼檢查(&C)", L"禁止程式碼檢查(&F)"};

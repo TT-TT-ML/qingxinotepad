@@ -240,9 +240,20 @@ void RebuildBuildMenu()
     AppendMenuW(hBuild, MF_STRING, IDM_BUILD_FORCE, lang.menuForceCompile.c_str());
 
     // 2c) Code checking on/off (checked = the editor flags unknown functions
-    // and missing #include).
-    AppendMenuW(hBuild, MF_STRING | (g_state.codeCheck ? MF_CHECKED : MF_UNCHECKED),
-                IDM_BUILD_CODECHECK, lang.menuCodeCheck.c_str());
+    // and missing #include). 一旦「禁止代码检查」勾上，这一项置灰且不勾。
+    {
+        UINT flags = MF_STRING;
+        if (g_state.noCodeCheck)
+            flags |= MF_GRAYED;
+        else if (g_state.codeCheck)
+            flags |= MF_CHECKED;
+        AppendMenuW(hBuild, flags, IDM_BUILD_CODECHECK, lang.menuCodeCheck.c_str());
+    }
+
+    // 2d) Forbid code checking entirely: forces the switch above off.
+    AppendMenuW(hBuild,
+                MF_STRING | (g_state.noCodeCheck ? MF_CHECKED : MF_UNCHECKED),
+                IDM_BUILD_NOCODECHECK, lang.menuNoCodeCheck.c_str());
 
     AppendMenuW(hBuild, MF_SEPARATOR, 0, nullptr);
 
