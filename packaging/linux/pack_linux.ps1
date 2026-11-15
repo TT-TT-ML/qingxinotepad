@@ -6,10 +6,12 @@
 # 用法：
 #   pwsh -File packaging\linux\pack_linux.ps1 -Version 1.4.5                 # 全部架构
 #   pwsh -File packaging\linux\pack_linux.ps1 -Version 1.4.5 -Arch arm64     # 只出一个
-#   pwsh -File packaging\linux\pack_linux.ps1 -Version 1.4.5 -Zig F:\zig\zig.exe
+#   pwsh -File packaging\linux\pack_linux.ps1 -Version 1.4.5 -Flavor musl -Zig F:\zig\zig.exe
+#     - musl：启动器换成 zig 交叉编译的静态 ELF（包名追加 -musl），不再依赖 /bin/sh
 param(
     [string]$Version = "1.4.6",
     [string]$Arch    = "all",
+    [string]$Flavor  = "shell",
     [string]$Zig     = ""
 )
 $ErrorActionPreference = "Stop"
@@ -39,17 +41,15 @@ foreach ($m in $map) {
     New-Item -ItemType Directory -Path $pkg | Out-Null
 
     # 1. 启动器
-    $launcher = Join-Path $pkg "qingxi-notepad"
-    WriteLf (Join-Path $PSScriptRoot "qingxi-notepad.sh") $launcher
     $mode = "shell"
-    if ($Zig -and (Test-Path -LiteralPath $Zig)) {
-        $elf = Join-Path $pkg "qingxi-notepad.bin"
-        & $Zig cc "--target=$($m.ZigArch)" -O2 -static -s (Join-Path $PSScriptRoot "qingxi-notepad.c") -o $elf 2>&1 | Out-Null
-        if ($LASTEXITCODE -eq 0 -and (Test-Path -LiteralPath $elf)) {
-            Remove-Item -LiteralPath $launcher -Force
-            Rename-Item -LiteralPath $elf -NewName "qingxi-notepad"
-            $mode = "elf($($m.ZigArch))"
-        }
+    if ($Flavor -eq "musl") {
+        if (-not ($Zig -and (Test-Path -LiteralPath $Zig))) { throw "musl 变体需要 -Zig <zig.exe 路径>" }
+        $launcher = Join-Path $pkg "qingxi-notepad"
+        & $Zig cc "--target=$($m.ZigArch)" -O2 -static -s (Join-Path $PSScriptRoot "qingxi-notepad.c") -o $launcher 2>&1 | Out-Null
+        if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $launcher)) { throw "$($m.Arch) ELF 启动器编译失败" }
+        $mode = "elf($($m.ZigArch))"
+    } else {
+        WriteLf (Join-Path $PSScriptRoot "qingxi-notepad.sh") (Join-Path $pkg "qingxi-notepad")
     }
 
     # 2. 组装
@@ -60,8 +60,9 @@ foreach ($m in $map) {
     WriteLf (Join-Path $PSScriptRoot "install.sh") (Join-Path $pkg "install.sh")
 
     # 3. 打包（python tarfile 写入正确权限位）
-    $tarball = Join-Path $dist ("qingxinotepad-linux-" + $m.Arch + "-" + $Version + ".tar.gz")
-    $folder = "qingxinotepad-linux-$($m.Arch)-$Version"
+    $suffix = if ($Flavor -eq "musl") { "-musl" } else { "" }
+    $tarball = Join-Path $dist ("qingxinotepad-linux-" + $m.Arch + "-" + $Version + $suffix + ".tar.gz")
+    $folder = "qingxinotepad-linux-$($m.Arch)-$Version$suffix"
     if (Test-Path -LiteralPath $tarball) { Remove-Item -LiteralPath $tarball -Force }
     $py = (Get-Command python -ErrorAction Stop).Source
     & $py (Join-Path $PSScriptRoot "make_tar.py") $pkg $folder $tarball | Out-Null

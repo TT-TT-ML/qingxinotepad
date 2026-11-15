@@ -49,14 +49,30 @@ EOF
 fi
 
 # 免 Mono/Gecko 弹窗，日志关掉
-WINEPREFIX="${WINEPREFIX:-$HOME/.local/share/qingxi-notepad/wine}"
+if [ -n "${WINEPREFIX:-}" ]; then
+    :
+else
+    # WINEPREFIX 逐级兜底：XDG_DATA_HOME > ~/.local/share > ~/.qingxi-notepad
+    # （有些系统 ~/.local/share 属 root，不可写）
+    WINEPREFIX=""
+    for c in "${XDG_DATA_HOME:-}/qingxi-notepad/wine" \
+             "$HOME/.local/share/qingxi-notepad/wine" \
+             "$HOME/.qingxi-notepad/wine"; do
+        case "$c" in /qingxi-notepad/*) continue ;; esac
+        if mkdir -p "$c" 2>/dev/null; then WINEPREFIX="$c"; break; fi
+    done
+    if [ -z "$WINEPREFIX" ]; then
+        echo "qingxi-notepad: 无法创建 WINEPREFIX，请用 WINEPREFIX=/可写路径 指定" >&2
+        exit 1
+    fi
+fi
 export WINEPREFIX
 export WINEDLLOVERRIDES="mscoree,mshtml="
 export WINEDEBUG="-all"
 
 # 首次运行自动初始化 prefix（静默，避免卡在对话框）
-if [ ! -d "$WINEPREFIX" ]; then
-    mkdir -p "$WINEPREFIX" 2>/dev/null || true
+if [ ! -f "$WINEPREFIX/system.reg" ]; then
+    echo "qingxi-notepad: 首次运行，正在初始化 Wine 环境（约 30 秒）..." >&2
     "$WINE" wineboot --init >/dev/null 2>&1 || true
     "$WINE" wineserver -w >/dev/null 2>&1 || true
 fi

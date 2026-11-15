@@ -131,10 +131,19 @@ pwsh -File build_matrix.ps1 -Version 1.4.4
 
 主程序是纯 Win32 自绘应用，Linux 上通过 **Wine** 运行；启动器、安装脚本与桌面项都是原生 Linux 文件，包在 Windows 上就能构建（`packaging\linux\pack_linux.ps1`）。
 
+每个架构出两种包（内容相同，只有启动器不同）：
+
+| 包 | 启动器 | 体积 |
+| --- | --- | --- |
+| `qingxinotepad-linux-<arch>-1.4.6.tar.gz` | POSIX shell（任何有 `/bin/sh` 的系统都能跑） | ~396–519 KB |
+| `qingxinotepad-linux-<arch>-1.4.6-musl.tar.gz` | 静态 ELF（zig 交叉编译，无 glibc/`/bin/sh` 依赖） | ~423–540 KB |
+
+`<arch>` 取 `x86_64` / `arm64` / `i686`，包内主程序分别是 MinGW-x64、原生 ARM64（clang 交叉）、MSVC x86 的 Windows 可执行文件：
+
 ```
-qingxinotepad-linux-x86_64-1.4.6.tar.gz
-├── qingxi-notepad              # POSIX shell 启动器（选 wine、固定 WINEPREFIX、透传参数）
-├── qingxinotepad.exe           # MinGW-x64 主程序（Wine 加载）
+qingxinotepad-linux-<arch>-1.4.6[-musl].tar.gz
+├── qingxi-notepad              # 启动器（shell 或静态 ELF）
+├── qingxinotepad.exe           # 对应架构的主程序（Wine 加载）
 ├── qingxi-notepad.desktop      # 桌面项（MimeType=text/plain）
 ├── install.sh                  # ./install.sh（系统）或 ./install.sh --user（~/.local）
 ├── LICENSE / README.md
@@ -143,12 +152,14 @@ qingxinotepad-linux-x86_64-1.4.6.tar.gz
 | 需求 | 说明 |
 | --- | --- |
 | Wine | `apt install wine64` / `pacman -S wine` / `dnf install wine`；也可 `QINGXI_WINE=/path/to/wine` 指定 |
-| 首次运行 | 自动 `wineboot --init` 到 `~/.local/share/qingxi-notepad/wine`，不污染默认 prefix |
+| WINEPREFIX | 依次尝试 `$XDG_DATA_HOME/qingxi-notepad/wine`、`~/.local/share/qingxi-notepad/wine`、`~/.qingxi-notepad/wine`，取第一个可写的（某些系统 `~/.local/share` 属 root） |
+| 首次运行 | 自动 `wineboot --init`（约 30 秒），不污染默认 prefix |
 | 免弹窗 | 启动器已设 `WINEDLLOVERRIDES=mscoree,mshtml=`，不需要 Mono/Gecko |
+| ARM64 | 用原生 ARM64 exe，在 ARM64 Linux 的 Wine 上直接加载，不经 x86 转译 |
 
-已验证（云主机 Ubuntu 22.04，无 Wine 环境）：解包后 `sh -n` 语法通过；启动器在缺 exe / 缺 Wine 两种情况下分别给出 `找不到 qingxinotepad.exe`（退出码 1）与安装指引（退出码 127）。**未在带 Wine 的桌面上跑过 GUI**，这是目前唯一未验证的环节。
+已在云主机（Ubuntu 22.04，x86_64，装有 Wine 但无显示）实测：解包与权限位正确；`sh -n` 通过；缺 exe → `找不到 qingxinotepad.exe`（退出码 1）；缺 Wine → 安装指引（退出码 127）；有 Wine 时逐级创建 prefix 到 `~/.qingxi-notepad/wine` 并完成 `wineboot --init`（`system.reg`/`drive_c`/`user.reg` 均生成），最后因无 X 显示而由 Wine 返回 47。**图形界面本身仍未在带 Wine 的桌面上验证**。
 
-关于"在 Windows 上交叉编译 Linux 原生程序"：本机 clang（`F:\Qt\Tools\llvm-mingw2217_64\bin\clang.exe`）能生成 `elf64-x86-64` 目标文件，但链接缺 Linux sysroot（`Scrt1.o`、`crti.o`、`libc`），需要 glibc/musl 的 sysroot 才能出可执行文件；zig 分发包下载被限速到 ~8 KB/s，未完成。真要出**原生 Linux 版**，前置条件是把 `HWND/GDI/WM_*` 抽成 platform 层并写 X11 后端，不是加个编译器就能解决。
+交叉编译能力（本机实测）：`clang --target=x86_64-linux-gnu -c` 能出 `elf64-x86-64` 目标文件，但链接缺 Linux sysroot（`Scrt1.o`、`crti.o`、`libc`）；改用 **zig 0.14.1**（`zig cc --target=<arch>-linux-musl -static`）可完整链接出 x86_64 / aarch64 / i386 的静态 ELF，已在 `F:\zig\zig.exe`，是 `-Flavor musl` 的依赖。真要出**原生 Linux 版**（不用 Wine），前置条件仍未变：把 `HWND/GDI/WM_*` 抽成 platform 层并写 X11 后端。
 
 ## 目录结构
 
