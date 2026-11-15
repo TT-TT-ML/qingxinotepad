@@ -1,4 +1,4 @@
-# 晴溪notepad · Qingxi Notepad 1.4.5
+# 晴溪notepad · Qingxi Notepad 1.4.6
 
 轻量、原生的 Windows 文本 / 代码编辑器，用 C++17 + Win32 API 手写，**界面全部自绘**，不依赖 RichEdit / Qt / .NET，单文件 exe 无第三方运行时。
 
@@ -10,13 +10,13 @@ A lightweight native Windows text & code editor written in C++17 with the Win32 
 
 | 渠道 | 地址 |
 | --- | --- |
-| 官方下载中心 | <https://ttqx.cc.cd/d/> → 「晴溪notepad文本编辑器 / 1.4.5」 |
-| 安装版直链 | <https://ttqx.cc.cd/d/get/%E6%99%B4%E6%BA%AAnotepad%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8/1.4.5/qingxinotepad_install.exe> |
-| 绿色版直链 | <https://ttqx.cc.cd/d/get/%E6%99%B4%E6%BA%AAnotepad%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8/1.4.5/qingxinotepad-portable-1.4.5.zip> |
+| 官方下载中心 | <https://ttqx.cc.cd/d/> → 「晴溪notepad文本编辑器 / 1.4.6」 |
+| 安装版直链 | <https://ttqx.cc.cd/d/get/%E6%99%B4%E6%BA%AAnotepad%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8/1.4.6/qingxinotepad_install.exe> |
+| 绿色版直链 | <https://ttqx.cc.cd/d/get/%E6%99%B4%E6%BA%AAnotepad%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8/1.4.6/qingxinotepad-portable-1.4.6.zip> |
 | 源码 | 本仓库（`main` 分支） |
 
 - **安装版**：单个 `qingxinotepad_install.exe`，安装时可选要注册的文件关联扩展名。
-- **绿色版**：`qingxinotepad-portable-1.4.5.zip` 解压后直接运行 `qingxinotepad.exe`，配置写在 exe 同目录的 `qingxinotepad.ini`，不往系统里写任何东西。
+- **绿色版**：`qingxinotepad-portable-1.4.6.zip` 解压后直接运行 `qingxinotepad.exe`，配置写在 exe 同目录的 `qingxinotepad.ini`，不往系统里写任何东西。
 
 ## 功能
 
@@ -132,7 +132,7 @@ pwsh -File build_matrix.ps1 -Version 1.4.4
 主程序是纯 Win32 自绘应用，Linux 上通过 **Wine** 运行；启动器、安装脚本与桌面项都是原生 Linux 文件，包在 Windows 上就能构建（`packaging\linux\pack_linux.ps1`）。
 
 ```
-qingxinotepad-linux-x86_64-1.4.5.tar.gz
+qingxinotepad-linux-x86_64-1.4.6.tar.gz
 ├── qingxi-notepad              # POSIX shell 启动器（选 wine、固定 WINEPREFIX、透传参数）
 ├── qingxinotepad.exe           # MinGW-x64 主程序（Wine 加载）
 ├── qingxi-notepad.desktop      # 桌面项（MimeType=text/plain）
@@ -179,10 +179,14 @@ build_and_pack.ps1
 
 ## 版本历史
 
+### 1.4.6
+- **Linux 三架构包**：`qingxinotepad-linux-x86_64-1.4.6.tar.gz`、`-arm64`、`-i686`，均由 `packaging\linux\pack_linux.ps1` 在 Windows 上构建；每个包内含对应架构的 Windows 主程序与 POSIX shell 启动器。
+- arm64 包用的是原生 **ARM64 Windows** 主程序（clang 交叉产物），在 ARM64 Linux 上由 Wine 直接加载，无需 x86 转译；i686 包用 MSVC x86 主程序。
+
 ### 1.4.5
 - **四目标构建矩阵**：`build_matrix.ps1` 一条命令产出 msvc-x64 / msvc-x86（32 位）/ mingw-x64（GCC 静态）/ arm64（llvm-mingw clang 22 交叉，Windows on ARM），四者均 0 告警。
 - **告警清零**：修掉 clang/GCC 暴露的 12 处既有告警（`syntax.cpp` 未用数组、`libwindow.cpp` 未用常量与函数、`codeeditor.cpp` 逻辑括号、`symbols.cpp` set-but-unused），MSVC `/W4 /WX` 与 GCC/Clang `-Wall -Wextra` 同时干净。
-- 绿色包分架构：`qingxinotepad-portable-1.4.5.zip`（x64）、`-mingw-x64`、`-win32-x86`、`-arm64`。
+- 绿色包分架构：`qingxinotepad-portable-1.4.6.zip`（x64）、`-mingw-x64`、`-win32-x86`、`-arm64`。
 
 ### 1.4.4
 - **跨平台构建矩阵**：`build_matrix.ps1` 一次产出 MSVC x64 与 MinGW-w64 x64 两个构建；MinGW 版为静态链接的免安装包，不依赖 VC++ 运行库。

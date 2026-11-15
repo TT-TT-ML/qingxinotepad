@@ -5,7 +5,7 @@
 #   arm64      ：llvm-mingw(clang 22) 交叉编译，Windows on ARM
 # 用法：pwsh -File build_matrix.ps1 -Version 1.4.5 [-Only msvc-x64]
 param(
-    [string]$Version = "1.4.5",
+    [string]$Version = "1.4.6",
     [string]$CMake    = "D:\CMake\bin\cmake.exe",
     [string]$MinGWBin = "F:\MinGW\bin",
     [string]$LLVMMinGW = "F:\Qt\Tools\llvm-mingw2217_64\bin",
