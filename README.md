@@ -151,13 +151,21 @@ qingxinotepad-linux-<arch>-1.4.6[-musl].tar.gz
 
 | 需求 | 说明 |
 | --- | --- |
-| Wine | `apt install wine64` / `pacman -S wine` / `dnf install wine`；也可 `QINGXI_WINE=/path/to/wine` 指定 |
+| Wine | **7.0 或更新**（6.0.3 下主程序会 page fault，见下方实测）；`apt install wine64` / `pacman -S wine` / `dnf install wine`，也可 `QINGXI_WINE=/path/to/wine` 指定 |
 | WINEPREFIX | 依次尝试 `$XDG_DATA_HOME/qingxi-notepad/wine`、`~/.local/share/qingxi-notepad/wine`、`~/.qingxi-notepad/wine`，取第一个可写的（某些系统 `~/.local/share` 属 root） |
 | 首次运行 | 自动 `wineboot --init`（约 30 秒），不污染默认 prefix |
 | 免弹窗 | 启动器已设 `WINEDLLOVERRIDES=mscoree,mshtml=`，不需要 Mono/Gecko |
 | ARM64 | 用原生 ARM64 exe，在 ARM64 Linux 的 Wine 上直接加载，不经 x86 转译 |
 
-已在云主机（Ubuntu 22.04，x86_64，装有 Wine 但无显示）实测：解包与权限位正确；`sh -n` 通过；缺 exe → `找不到 qingxinotepad.exe`（退出码 1）；缺 Wine → 安装指引（退出码 127）；有 Wine 时逐级创建 prefix 到 `~/.qingxi-notepad/wine` 并完成 `wineboot --init`（`system.reg`/`drive_c`/`user.reg` 均生成），最后因无 X 显示而由 Wine 返回 47。**图形界面本身仍未在带 Wine 的桌面上验证**。
+**云主机实测（Ubuntu 22.04，x86_64，Wine 6.0.3，Xvfb 虚拟显示）**
+
+启动器侧全部通过：解包与权限位正确（`qingxi-notepad`、`install.sh` 为 755）；`sh -n` 通过；缺 exe → `找不到 qingxinotepad.exe`（退出码 1）；缺 Wine → 安装指引（退出码 127）；有 Wine 时逐级创建 prefix 到 `~/.qingxi-notepad/wine` 并生成 `system.reg`/`user.reg`/`drive_c`/`dosdevices`，随后转入 Wine。
+
+**主程序在 Wine 6.0.3 下会崩溃，这是当前已知限制**：主程序启动后稳定复现 `wine: Unhandled page fault on read access to 00006C6C64746EFF`，加 `-portable`、`/console`、`--help`、`explorer /desktop=` 虚拟桌面都一样，崩溃地址完全一致（稳定复现，非随机）。已做对照：
+- 同一 Wine 下 `notepad`、`winver`、`winecfg` 都能正常起（超时保持常驻），说明 Wine 环境本身可用，问题在我们程序侧。
+- **MSVC x64 与 MinGW x64 两个版本崩溃地址完全相同**，所以与编译器无关，是代码路径撞上 Wine 6 缺失的功能（或本程序在旧 Wine 上的真实缺陷）。
+
+因此**建议使用 Wine 7.0 及以上**（`apt install wine64` 默认源版本通常已 ≥ 7；Ubuntu 22.04 自带的是 6.0.3，需从 winehq 源装新版）。本仓库尚无在 Wine ≥ 7 下的图形界面验证记录，README 如实保留该结论；如果 Wine 新版同样崩溃，那就是程序缺陷，需要按 Wine 报的地址反查启动路径里的 API。
 
 交叉编译能力（本机实测）：`clang --target=x86_64-linux-gnu -c` 能出 `elf64-x86-64` 目标文件，但链接缺 Linux sysroot（`Scrt1.o`、`crti.o`、`libc`）；改用 **zig 0.14.1**（`zig cc --target=<arch>-linux-musl -static`）可完整链接出 x86_64 / aarch64 / i386 的静态 ELF，已在 `F:\zig\zig.exe`，是 `-Flavor musl` 的依赖。真要出**原生 Linux 版**（不用 Wine），前置条件仍未变：把 `HWND/GDI/WM_*` 抽成 platform 层并写 X11 后端。
 
