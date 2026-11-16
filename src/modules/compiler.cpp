@@ -182,6 +182,31 @@ struct CompileJob
     HANDLE hOut;          // handle of the output file (inherited by child)
 };
 
+// 显示用截断：命令由用户在「编译设置」里任意填写，直接拼进对话框会撑爆窗口，
+// 所以长文本只留前 N 个字符再加省略标记。
+static std::wstring ClampForDisplay(const std::wstring &text, size_t maxLen = 2000)
+{
+    if (text.size() <= maxLen)
+        return text;
+    return text.substr(0, maxLen) + L"…（命令过长，已截断显示）";
+}
+
+// 唯一的临时输出文件名：进程 ID + 递增计数 + 毫秒时间，配 CREATE_NEW 原子创建，
+// 既不会撞上别人预置的同名文件（避免跟随重解析点），也不会让多开实例互相覆盖。
+static std::wstring MakeUniqueTempPath()
+{
+    wchar_t tmpPath[MAX_PATH] = {0};
+    GetTempPathW(MAX_PATH, tmpPath);
+    static volatile LONG counter = 0;
+    const LONG seq = InterlockedIncrement(&counter);
+    const unsigned long long now = GetTickCount64();
+    std::wstring leaf = L"qingxinotepad_build_" +
+                        std::to_wstring(GetCurrentProcessId()) + L"_" +
+                        std::to_wstring(now) + L"_" +
+                        std::to_wstring(seq) + L".tmp";
+    return std::wstring(tmpPath) + leaf;
+}
+
 static DWORD WINAPI CompileWorker(LPVOID param)
 {
     CompileJob *job = static_cast<CompileJob *>(param);
@@ -202,8 +227,8 @@ static DWORD WINAPI CompileWorker(LPVOID param)
     if (!ok)
     {
         DWORD err = GetLastError();
-        wchar_t msg[512] = {0};
-        wsprintfW(msg, L"无法启动编译器命令。\n错误码: %lu\n\n命令:\n%ls", err, job->cmd.c_str());
+        std::wstring msg = L"无法启动编译器命令。\n错误码: " + std::to_wstring(err) +
+                           L"\n\n命令:\n" + ClampForDisplay(job->cmd);
         res->output = msg;
         res->success = false;
         CloseHandle(job->hOut);
@@ -230,9 +255,16 @@ static DWORD WINAPI CompileWorker(LPVOID param)
     if (hIn != INVALID_HANDLE_VALUE)
     {
         DWORD sz = GetFileSize(hIn, nullptr);
+        if (sz == INVALID_FILE_SIZE)
+            sz = 0;
+        // 编译输出也要有上限：失控的编译器可能吐出几个 G 的日志
+        if (sz > 32u * 1024u * 1024u)
+            sz = 32u * 1024u * 1024u;
         data.resize(sz);
         DWORD rd = 0;
-        ReadFile(hIn, data.data(), sz, &rd, nullptr);
+        if (sz > 0)
+            ReadFile(hIn, data.data(), sz, &rd, nullptr);
+        data.resize(rd);
         CloseHandle(hIn);
     }
     DeleteFileW(job->outFile.c_str());
@@ -299,17 +331,16 @@ void BuildCompileLang(const std::wstring &id)
     cmd = ReplaceAll(cmd, L"{name}", name);
     cmd = ReplaceAll(cmd, L"{out}", out);
 
-    // 3. Redirect output to a temp file (created on the UI thread, written
-    //    and closed by the worker).
-    wchar_t tmpPath[MAX_PATH] = {0};
-    GetTempPathW(MAX_PATH, tmpPath);
-    std::wstring outFile = std::wstring(tmpPath) + L"qingxinotepad_build.tmp";
+    // 3. Redirect output to a temp file with a unique name, created atomically
+    //    (CREATE_NEW) so a pre-planted file or reparse point at a fixed path
+    //    cannot be followed/truncated, and parallel instances never share one.
     SECURITY_ATTRIBUTES sa = {};
     sa.nLength = sizeof(sa);
     sa.bInheritHandle = TRUE;
     sa.lpSecurityDescriptor = nullptr;
+    std::wstring outFile = MakeUniqueTempPath();
     HANDLE hOut = CreateFileW(outFile.c_str(), GENERIC_WRITE, FILE_SHARE_READ, &sa,
-                              CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+                              CREATE_NEW, FILE_ATTRIBUTE_TEMPORARY, nullptr);
     if (hOut == INVALID_HANDLE_VALUE)
     {
         ShowCompileResult(g_hwndMain, L"无法创建临时输出文件。", false);
@@ -333,9 +364,8 @@ void BuildCompileLang(const std::wstring &id)
         CloseHandle(hOut);
         DeleteFileW(outFile.c_str());
         delete job;
-        wchar_t msg[512] = {0};
-        wsprintfW(msg, L"无法创建编译线程。\n错误码: %lu", err);
-        ShowCompileResult(g_hwndMain, msg, false);
+        ShowCompileResult(g_hwndMain,
+                          L"无法创建编译线程。\n错误码: " + std::to_wstring(err), false);
         g_ignoreCheck = false;
         InterlockedExchange(&g_compileBusy, 0);
         return;

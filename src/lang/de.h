@@ -81,7 +81,7 @@ inline LangStrings g_langDE = {
     L"Datei kann nicht geöffnet werden.",
     L"Datei kann nicht gespeichert werden.",
     L"Fehler",
-    L"Qingxi Notepad v1.4.7\n\nEin schneller, schlanker Texteditor.\n\nEntwickelt mit C++ und Win32-API.\n",
+    L"Qingxi Notepad v1.4.8\n\nEin schneller, schlanker Texteditor.\n\nEntwickelt mit C++ und Win32-API.\n",
     L" Z ",
     L", Sp ",
     L"UTF-8",
@@ -126,4 +126,4 @@ inline LangStrings g_langDE = {
     L"&Ausgabe löschen",
     L"Konsole &schließen",
     L"&Einstellungen...",
-    L"Code-&Prüfung", L"Code-Prüfung &verbieten"};
+    L"Code-&Prüfung", L"Code-Prüfung &verbieten", L"Die Datei überschreitet das Limit von 128 MB und wurde nicht geöffnet."};

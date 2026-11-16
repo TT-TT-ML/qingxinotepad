@@ -1,4 +1,4 @@
-# 晴溪notepad · Qingxi Notepad 1.4.7
+# 晴溪notepad · Qingxi Notepad 1.4.8
 
 轻量、原生的 Windows 文本 / 代码编辑器，用 C++17 + Win32 API 手写，**界面全部自绘**，不依赖 RichEdit / Qt / .NET，单文件 exe 无第三方运行时。
 
@@ -10,13 +10,13 @@ A lightweight native Windows text & code editor written in C++17 with the Win32 
 
 | 渠道 | 地址 |
 | --- | --- |
-| 官方下载中心 | <https://ttqx.cc.cd/d/> → 「晴溪notepad文本编辑器 / 1.4.7」 |
-| 安装版直链 | <https://ttqx.cc.cd/d/get/%E6%99%B4%E6%BA%AAnotepad%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8/1.4.7/qingxinotepad_install.exe> |
-| 绿色版直链 | <https://ttqx.cc.cd/d/get/%E6%99%B4%E6%BA%AAnotepad%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8/1.4.7/qingxinotepad-portable-1.4.7.zip> |
+| 官方下载中心 | <https://ttqx.cc.cd/d/> → 「晴溪notepad文本编辑器 / 1.4.8」 |
+| 安装版直链 | <https://ttqx.cc.cd/d/get/%E6%99%B4%E6%BA%AAnotepad%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8/1.4.8/qingxinotepad_install.exe> |
+| 绿色版直链 | <https://ttqx.cc.cd/d/get/%E6%99%B4%E6%BA%AAnotepad%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8/1.4.8/qingxinotepad-portable-1.4.8.zip> |
 | 源码 | 本仓库（`main` 分支） |
 
 - **安装版**：单个 `qingxinotepad_install.exe`，安装时可选要注册的文件关联扩展名。
-- **绿色版**：`qingxinotepad-portable-1.4.7.zip` 解压后直接运行 `qingxinotepad.exe`，配置写在 exe 同目录的 `qingxinotepad.ini`，不往系统里写任何东西。
+- **绿色版**：`qingxinotepad-portable-1.4.8.zip` 解压后直接运行 `qingxinotepad.exe`，配置写在 exe 同目录的 `qingxinotepad.ini`，不往系统里写任何东西。
 
 ## 功能
 
@@ -197,6 +197,13 @@ build_and_pack.ps1
 ```
 
 ## 版本历史
+
+### 1.4.8
+安全与稳定性修复（对应静态审查的 3 项发现）：
+- **编译失败日志不再用固定栈缓冲区**：`CompileWorker` 里的 `wchar_t msg[512]` + `wsprintfW` 换成 `std::wstring` 拼接，错误码用 `std::to_wstring`；用户可编辑的编译命令按 2000 字符截断后再显示（`ClampForDisplay`），超长命令不会再越界写栈。创建线程失败的提示同理。
+- **临时输出文件改为唯一名 + `CREATE_NEW` 原子创建**：原来固定 `%TEMP%\qingxinotepad_build.tmp` + `CREATE_ALWAYS`，可能跟随预置的符号链接/重解析点被截断，多实例也会互相覆盖。现在文件名带进程 ID、`GetTickCount64()` 与递增序号（`MakeUniqueTempPath`），用 `CREATE_NEW | FILE_ATTRIBUTE_TEMPORARY` 打开，读完立即 `DeleteFileW`；同时把编译输出读回的上限压到 32 MB，失控的编译器吐再多日志也不会把内存吃光。
+- **打开文件加 128 MB 上限**：`LoadFile` 改用 `GetFileSizeEx`（能识别 >4 GiB 并判断失败），超过上限直接弹「文件超过 128 MB 上限，已取消打开。」，分配失败按“打不开”处理。符号扫描的 `ReadTextFile` 同样改用 `GetFileSizeEx`，超过 64 MB 或大小查询失败一律返回 false —— 修掉了原来 `GetFileSize` 失败时按 `0xFFFFFFFF` 分配近 4 GiB 的问题，`ReadFile` 的返回值也不再被忽略。
+- 新增提示文案 `msgFileTooLarge`，15 种语言同步；关于框版本号统一 1.4.8。
 
 ### 1.4.7
 - 「编译」菜单新增 **「禁止代码检查」**：勾选后强制关闭代码检查（未知函数 / 缺 `#include` 的标红与弹窗），上方的「代码检查」开关同时置灰、无法绕过；取消勾选即恢复可用。选择记在注册表 `Software\LegacyNotepad` 的 `NoCodeCheck`，下次启动保持。

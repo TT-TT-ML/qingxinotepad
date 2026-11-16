@@ -83,7 +83,7 @@ inline LangStrings g_langTR = {
     L"Dosya açılamadı.",
     L"Dosya kaydedilemedi.",
     L"Hata",
-    L"Qingxi Notepad v1.4.7\n\nHızlı ve hafif bir metin düzenleyici.\n\nC++ ve Win32 API ile geliştirildi.\n",
+    L"Qingxi Notepad v1.4.8\n\nHızlı ve hafif bir metin düzenleyici.\n\nC++ ve Win32 API ile geliştirildi.\n",
     L" Sat ",
     L", Süt ",
     L"UTF-8",
@@ -128,4 +128,4 @@ inline LangStrings g_langTR = {
     L"Çıktıyı &temizle",
     L"&Konsolu kapat",
     L"&Ayarlar...",
-    L"&Kod denetimi", L"&Kod denetimini yasakla"};
+    L"&Kod denetimi", L"&Kod denetimini yasakla", L"Dosya 128 MB sınırını aştığı için açılmadı."};

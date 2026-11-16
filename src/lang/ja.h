@@ -91,7 +91,7 @@ inline LangStrings g_langJA = {
     L"ファイルを開けません。",
     L"ファイルを保存できません。",
     L"エラー",
-    L"Qingxi Notepad v1.4.7\n\n高速で軽量なテキストエディタ。\n\nC++ Win32 API で構築。\n", //\nModify by 0x2o.net",
+    L"Qingxi Notepad v1.4.8\n\n高速で軽量なテキストエディタ。\n\nC++ Win32 API で構築。\n", //\nModify by 0x2o.net",
 
     L" 行 ",
     L", 列 ",
@@ -139,4 +139,4 @@ inline LangStrings g_langJA = {
     L"出力をクリア(&L)",
     L"コンソールを閉じる(&X)",
     L"設定(&S)...",
-    L"コード検査(&C)", L"コード検査を禁止(&F)"};
+    L"コード検査(&C)", L"コード検査を禁止(&F)", L"ファイルが 128 MB の上限を超えているため、開きませんでした。"};

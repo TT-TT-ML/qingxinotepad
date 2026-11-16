@@ -81,7 +81,7 @@ inline LangStrings g_langKO = {
     L"파일을 열 수 없습니다.",
     L"파일을 저장할 수 없습니다.",
     L"오류",
-    L"Qingxi Notepad v1.4.7\n\n빠르고 가벼운 텍스트 편집기.\n\nC++와 Win32 API로 제작.\n",
+    L"Qingxi Notepad v1.4.8\n\n빠르고 가벼운 텍스트 편집기.\n\nC++와 Win32 API로 제작.\n",
     L" 줄 ",
     L", 열 ",
     L"UTF-8",
@@ -126,4 +126,4 @@ inline LangStrings g_langKO = {
     L"출력 지우기(&L)",
     L"콘솔 닫기(&X)",
     L"설정(&S)...",
-    L"코드 검사(&C)", L"코드 검사 금지(&F)"};
+    L"코드 검사(&C)", L"코드 검사 금지(&F)", L"파일이 128 MB 제한을 초과하여 열지 않았습니다."};

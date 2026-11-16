@@ -568,6 +568,10 @@ static void CollectIncludes(const std::wstring &text, std::vector<std::wstring> 
 }
 
 // Read a header file into a wide string (UTF-8 / UTF-16 / ANSI tolerant).
+// 头文件只用来抓函数声明，超过 64 MB 或大小查询失败一律放弃，绝不按
+// INVALID_FILE_SIZE 去分配近 4 GiB。
+static const LONGLONG MAX_HEADER_BYTES = 64LL * 1024 * 1024;
+
 static bool ReadTextFile(const std::wstring &path, std::wstring &out)
 {
     HANDLE h = CreateFileW(path.c_str(), GENERIC_READ,
@@ -575,11 +579,20 @@ static bool ReadTextFile(const std::wstring &path, std::wstring &out)
                            nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
     if (h == INVALID_HANDLE_VALUE)
         return false;
-    DWORD size = GetFileSize(h, nullptr);
+    LARGE_INTEGER fileSize = {};
+    if (!GetFileSizeEx(h, &fileSize) || fileSize.QuadPart < 0 ||
+        fileSize.QuadPart > MAX_HEADER_BYTES)
+    {
+        CloseHandle(h);
+        return false;
+    }
+    const DWORD size = static_cast<DWORD>(fileSize.QuadPart);
     std::vector<BYTE> buf(size ? size : 1);
     DWORD read = 0;
-    ReadFile(h, buf.data(), size, &read, nullptr);
+    const BOOL ok = size == 0 ? TRUE : ReadFile(h, buf.data(), size, &read, nullptr);
     CloseHandle(h);
+    if (!ok)
+        return false;
     buf.resize(read);
 
     if (read >= 2 && buf[0] == 0xFF && buf[1] == 0xFE)

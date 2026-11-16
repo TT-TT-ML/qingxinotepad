@@ -81,7 +81,7 @@ inline LangStrings g_langZH = {
     L"无法打开文件。",
     L"无法保存文件。",
     L"错误",
-    L"Qingxi Notepad v1.4.7\n\n快速轻量的文本编辑器。\n\n使用 C++ Win32 API 构建。\n",
+    L"Qingxi Notepad v1.4.8\n\n快速轻量的文本编辑器。\n\n使用 C++ Win32 API 构建。\n",
     L"行 ",
     L"，列 ",
     L"UTF-8",
@@ -126,4 +126,4 @@ inline LangStrings g_langZH = {
     L"清空输出(&L)",
     L"关闭命令行窗口(&X)",
     L"设置(&S)...",
-    L"代码检查(&C)", L"禁止代码检查(&F)"};
+    L"代码检查(&C)", L"禁止代码检查(&F)", L"文件超过 128 MB 上限，已取消打开。"};

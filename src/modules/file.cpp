@@ -23,6 +23,7 @@
 #include "resource.h"
 #include <shlwapi.h>
 #include <algorithm>
+#include <exception>
 
 const wchar_t *GetEncodingName(Encoding e)
 {
@@ -225,6 +226,10 @@ std::vector<BYTE> EncodeText(const std::wstring &text, Encoding enc, LineEnding 
     return result;
 }
 
+// 打开文件的硬上限：超过就直接拒绝，避免异常大的文件把内存吃光。
+// 128 MB 的字节数据解码成宽字符后约 256 MB，留足余量又不至于一击就崩。
+static const LONGLONG MAX_OPEN_BYTES = 128LL * 1024 * 1024;
+
 void LoadFile(const std::wstring &path)
 {
     const auto &lang = GetLangStrings();
@@ -235,14 +240,32 @@ void LoadFile(const std::wstring &path)
         MessageBoxW(g_hwndMain, lang.msgCannotOpenFile.c_str(), lang.msgError.c_str(), MB_ICONERROR);
         return;
     }
-    DWORD size = GetFileSize(hFile, nullptr);
-    if (size == INVALID_FILE_SIZE && GetLastError() != NO_ERROR)
+    LARGE_INTEGER fileSize = {};
+    if (!GetFileSizeEx(hFile, &fileSize) || fileSize.QuadPart < 0)
     {
         CloseHandle(hFile);
         MessageBoxW(g_hwndMain, lang.msgCannotOpenFile.c_str(), lang.msgError.c_str(), MB_ICONERROR);
         return;
     }
-    std::vector<BYTE> data(size);
+    if (fileSize.QuadPart > MAX_OPEN_BYTES)
+    {
+        CloseHandle(hFile);
+        MessageBoxW(g_hwndMain, lang.msgFileTooLarge.c_str(), lang.msgError.c_str(), MB_ICONWARNING);
+        return;
+    }
+    const DWORD size = static_cast<DWORD>(fileSize.QuadPart);
+    std::vector<BYTE> data;
+    try
+    {
+        data.resize(size);
+    }
+    catch (const std::exception &)
+    {
+        // 分配失败（内存不足）不能让程序直接崩，按“打不开”处理
+        CloseHandle(hFile);
+        MessageBoxW(g_hwndMain, lang.msgCannotOpenFile.c_str(), lang.msgError.c_str(), MB_ICONERROR);
+        return;
+    }
     DWORD read = 0;
     BOOL ok = size == 0 ? TRUE : ReadFile(hFile, data.data(), size, &read, nullptr);
     CloseHandle(hFile);
