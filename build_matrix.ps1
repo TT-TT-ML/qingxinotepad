@@ -8,7 +8,7 @@
 #   pwsh -File build_matrix.ps1                      # 只出本机架构 x64
 #   pwsh -File build_matrix.ps1 -Only msvc-x86,mingw-x64,arm64   # 需要时才开多架构
 param(
-    [string]$Version = "1.4.9",
+    [string]$Version = "1.5.0",
     [string]$CMake    = "D:\CMake\bin\cmake.exe",
     [string]$MinGWBin = "F:\MinGW\bin",
     [string]$LLVMMinGW = "F:\Qt\Tools\llvm-mingw2217_64\bin",

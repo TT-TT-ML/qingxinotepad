@@ -83,7 +83,7 @@ inline LangStrings g_langIT = {
     L"Impossibile aprire il file.",
     L"Impossibile salvare il file.",
     L"Errore",
-    L"Qingxi Notepad v1.4.9\n\nUn editor di testo veloce e leggero.\n\nRealizzato con C++ e Win32 API.\n",
+    L"Qingxi Notepad v1.5.0\n\nUn editor di testo veloce e leggero.\n\nRealizzato con C++ e Win32 API.\n",
     L" Riga ",
     L", Col ",
     L"UTF-8",

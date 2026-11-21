@@ -685,6 +685,21 @@ static size_t OffsetAt(HWND hwnd, const EditorState *st, int visRow, int dispCol
     return LineStart(st, line) + idx;
 }
 
+// 鼠标点击落点对应的插入位置：点在某个字符上时，光标停在该字符之后
+// （以前是停在字符之前，用户觉得反直觉）。点在行尾空白或超过行尾时仍停在行尾。
+static size_t ClickCaretOffset(HWND hwnd, EditorState *st, int x, int y)
+{
+    int row = st->topRow + y / (std::max)(1, st->lineH);
+    int disp = (x - st->gutterW) / (std::max)(1, st->charW);
+    if (disp < 0)
+        disp = 0;
+    size_t pos = OffsetAt(hwnd, st, row, disp);
+    // 只有点在正文区域才算“点在这个字符上”；点在行号槽里仍停在行首
+    if (x >= st->gutterW && pos < st->text.size() && st->text[pos] != L'\n')
+        ++pos;
+    return pos;
+}
+
 static void RecomputeGutter(EditorState *st)
 {
     int n = LineCount(st);
@@ -2942,11 +2957,7 @@ LRESULT CALLBACK CodeEditorWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
         st->dragging = true;
         int x = GET_X_LPARAM(lParam);
         int y = GET_Y_LPARAM(lParam);
-        int row = st->topRow + y / (std::max)(1, st->lineH);
-        int disp = (x - st->gutterW) / (std::max)(1, st->charW);
-        if (disp < 0)
-            disp = 0;
-        size_t pos = OffsetAt(hwnd, st, row, disp);
+        size_t pos = ClickCaretOffset(hwnd, st, x, y);
         st->anchor = pos;
         st->caret = pos;
         st->hasSel = false;
@@ -2964,11 +2975,7 @@ LRESULT CALLBACK CodeEditorWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
         {
             int x = GET_X_LPARAM(lParam);
             int y = GET_Y_LPARAM(lParam);
-            int row = st->topRow + y / (std::max)(1, st->lineH);
-            int disp = (x - st->gutterW) / (std::max)(1, st->charW);
-            if (disp < 0)
-                disp = 0;
-            size_t pos = OffsetAt(hwnd, st, row, disp);
+            size_t pos = ClickCaretOffset(hwnd, st, x, y);
             if (pos != st->caret)
             {
                 st->caret = pos;

@@ -2137,8 +2137,11 @@ namespace
                 if (!g_con.findMode)
                 {
                     const int promptLen = static_cast<int>(g_con.cwd.size()) + 1;
-                    int idx = (x - g_con.padX) / (g_con.cellW ? g_con.cellW : 8) - promptLen;
-                    idx = ClampInt(idx, 0, static_cast<int>(g_con.input.size()));
+                    int cell = (x - g_con.padX) / (g_con.cellW ? g_con.cellW : 8) - promptLen;
+                    // 点在某个字符上时，光标停在该字符之后（与编辑器一致的“点后”语义）
+                    if (cell >= 0 && cell < static_cast<int>(g_con.input.size()))
+                        ++cell;
+                    int idx = ClampInt(cell, 0, static_cast<int>(g_con.input.size()));
                     g_con.caret = idx;
                     RedrawConsole();
                 }

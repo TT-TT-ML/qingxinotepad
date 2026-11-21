@@ -83,7 +83,7 @@ inline LangStrings g_langAR = {
     L"لا يمكن فتح الملف.",
     L"لا يمكن حفظ الملف.",
     L"خطأ",
-    L"Qingxi Notepad v1.4.9\n\nمحرر نصوص سريع وخفيف.\n\nمبني بلغة C++ وواجهة Win32 API.\n",
+    L"Qingxi Notepad v1.5.0\n\nمحرر نصوص سريع وخفيف.\n\nمبني بلغة C++ وواجهة Win32 API.\n",
     L" سطر ",
     L"، عمود ",
     L"UTF-8",
