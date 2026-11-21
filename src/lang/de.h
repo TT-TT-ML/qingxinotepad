@@ -81,7 +81,7 @@ inline LangStrings g_langDE = {
     L"Datei kann nicht geöffnet werden.",
     L"Datei kann nicht gespeichert werden.",
     L"Fehler",
-    L"Qingxi Notepad v1.4.8\n\nEin schneller, schlanker Texteditor.\n\nEntwickelt mit C++ und Win32-API.\n",
+    L"Qingxi Notepad v1.4.9\n\nEin schneller, schlanker Texteditor.\n\nEntwickelt mit C++ und Win32-API.\n",
     L" Z ",
     L", Sp ",
     L"UTF-8",

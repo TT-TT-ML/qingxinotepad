@@ -1421,11 +1421,34 @@ namespace
         }
     }
 
+    // cmd.exe 不认 POSIX 风格的 "./"：`cmd /C ./a.exe` 会报「'.' 不是内部或外部命令」。
+    // 这里在每个命令词开头把 "./" 换成 ".\"，其余原样保留（"a/b" 这类参数里的斜杠不动）。
+    std::wstring NormalizePosixPaths(const std::wstring &cmd)
+    {
+        std::wstring out;
+        out.reserve(cmd.size() + 8);
+        for (size_t i = 0; i < cmd.size(); ++i)
+        {
+            const wchar_t c = cmd[i];
+            const bool atTokenStart = out.empty() || iswspace(out.back()) ||
+                                      out.back() == L'"' || out.back() == L'(' ||
+                                      out.back() == L'\'';
+            if (c == L'.' && i + 1 < cmd.size() && cmd[i + 1] == L'/' && atTokenStart)
+            {
+                out += L".\\";
+                ++i; // 跳过那个 '/'
+                continue;
+            }
+            out += c;
+        }
+        return out;
+    }
+
     void RunCommandAsync(const std::wstring &command, const std::wstring &dir)
     {
         RunJob *job = new RunJob();
         job->hwnd = g_con.hwnd;
-        job->cmdline = L"cmd.exe /C " + command;
+        job->cmdline = L"cmd.exe /C " + NormalizePosixPaths(command);
         job->dir = dir;
         job->job = CreateJobObjectW(nullptr, nullptr);
         job->outRead = nullptr;
